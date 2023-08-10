@@ -84,7 +84,6 @@ func (cmd *RunCommand) Run(pctx context.Context) error {
 		PreAddOK(nftcmds.PNameOperationProcessorsMap, nftcmds.POperationProcessorsMap).
 		PreAddOK(timestampcmds.PNameOperationProcessorsMap, timestampcmds.POperationProcessorsMap).
 		PreAddOK(credentialcmds.PNameOperationProcessorsMap, credentialcmds.POperationProcessorsMap).
-		PreAddOK(credentialcmds.PNameOperationProcessorsMap, credentialcmds.POperationProcessorsMap).
 		PreAddOK(PNameOperationProcessorsMap, POperationProcessorsMap).
 		PreAddOK(ps.Name("when-new-block-saved-in-consensus-state-func"), cmd.pWhenNewBlockSavedInConsensusStateFunc).
 		PreAddOK(ps.Name("when-new-block-confirmed-func"), cmd.pWhenNewBlockConfirmed)
