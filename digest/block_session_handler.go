@@ -31,13 +31,3 @@ func (bs *BlockSession) handleCurrencyState(st mitumbase.State) ([]mongo.WriteMo
 	}
 	return []mongo.WriteModel{mongo.NewInsertOneModel().SetDocument(doc)}, nil
 }
-
-func (bs *BlockSession) handleNFTCollectionState(st mitumbase.State) ([]mongo.WriteModel, error) {
-	if nftCollectionDoc, err := NewNFTCollectionDoc(st, bs.st.DatabaseEncoder()); err != nil {
-		return nil, err
-	} else {
-		return []mongo.WriteModel{
-			mongo.NewInsertOneModel().SetDocument(nftCollectionDoc),
-		}, nil
-	}
-}

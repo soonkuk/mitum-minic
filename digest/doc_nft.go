@@ -40,7 +40,6 @@ func (doc NFTCollectionDoc) MarshalBSON() ([]byte, error) {
 	}
 
 	m["contract"] = doc.de.Parent()
-	m["collection"] = doc.de.Collection()
 	m["height"] = doc.st.Height()
 	m["design"] = doc.de
 
@@ -91,7 +90,6 @@ func (doc NFTDoc) MarshalBSON() ([]byte, error) {
 	}
 
 	m["contract"] = parsedKey[1]
-	m["collection"] = parsedKey[2]
 	m["nftid"] = strconv.FormatUint(doc.nft.ID(), 10)
 	m["owner"] = doc.nft.Owner()
 	m["addresses"] = doc.addresses
@@ -135,7 +133,6 @@ func (doc NFTOperatorDoc) MarshalBSON() ([]byte, error) {
 	}
 
 	m["contract"] = parsedKey[1]
-	m["collection"] = doc.operators.Collection().String()
 	m["address"] = parsedKey[3]
 	m["operators"] = doc.operators
 	m["height"] = doc.st.Height()
@@ -177,7 +174,6 @@ func (doc NFTBoxDoc) MarshalBSON() ([]byte, error) {
 	}
 
 	m["contract"] = parsedKey[1]
-	m["collection"] = parsedKey[2]
 	m["nfts"] = doc.nftbox.NFTs()
 	m["istoken"] = false
 	m["height"] = doc.st.Height()
@@ -219,7 +215,6 @@ func (doc NFTLastIndexDoc) MarshalBSON() ([]byte, error) {
 	}
 
 	m["contract"] = parsedKey[1]
-	m["collection"] = parsedKey[2]
 	m["id"] = doc.nftID
 	m["height"] = doc.st.Height()
 

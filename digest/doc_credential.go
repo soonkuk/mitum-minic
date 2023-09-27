@@ -40,7 +40,6 @@ func (doc IssuerDoc) MarshalBSON() ([]byte, error) {
 
 	parsedKey, err := state.ParseStateKey(doc.st.Key(), state.CredentialPrefix)
 	m["contract"] = parsedKey[1]
-	m["service"] = doc.de.ServiceID()
 	m["height"] = doc.st.Height()
 	m["design"] = doc.de
 
@@ -83,8 +82,7 @@ func (doc HolderDIDDoc) MarshalBSON() ([]byte, error) {
 	}
 
 	m["contract"] = parsedKey[1]
-	m["service"] = parsedKey[2]
-	m["holder"] = parsedKey[3]
+	m["holder"] = parsedKey[2]
 	m["did"] = doc.did
 	m["height"] = doc.st.Height()
 
@@ -125,9 +123,8 @@ func (doc CredentialDoc) MarshalBSON() ([]byte, error) {
 	}
 
 	m["contract"] = parsedKey[1]
-	m["service"] = parsedKey[2]
-	m["template"] = parsedKey[3]
-	m["credential_id"] = parsedKey[4]
+	m["template"] = parsedKey[2]
+	m["credential_id"] = parsedKey[3]
 	m["height"] = doc.st.Height()
 
 	return bsonenc.Marshal(m)
@@ -168,8 +165,7 @@ func (doc TemplateDoc) MarshalBSON() ([]byte, error) {
 	}
 
 	m["contract"] = parsedKey[1]
-	m["service"] = parsedKey[2]
-	m["template"] = parsedKey[3]
+	m["template"] = parsedKey[2]
 	m["height"] = doc.st.Height()
 
 	return bsonenc.Marshal(m)

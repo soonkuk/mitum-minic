@@ -62,6 +62,16 @@ func (bs *BlockSession) prepareNFTs() error {
 	return nil
 }
 
+func (bs *BlockSession) handleNFTCollectionState(st mitumbase.State) ([]mongo.WriteModel, error) {
+	if nftCollectionDoc, err := NewNFTCollectionDoc(st, bs.st.DatabaseEncoder()); err != nil {
+		return nil, err
+	} else {
+		return []mongo.WriteModel{
+			mongo.NewInsertOneModel().SetDocument(nftCollectionDoc),
+		}, nil
+	}
+}
+
 func (bs *BlockSession) handleNFTOperatorsState(st mitumbase.State) ([]mongo.WriteModel, error) {
 	if nftCollectionDoc, err := NewNFTOperatorDoc(st, bs.st.DatabaseEncoder()); err != nil {
 		return nil, err

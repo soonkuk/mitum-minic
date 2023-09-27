@@ -1,7 +1,6 @@
 package processor
 
 import (
-	"fmt"
 	"github.com/ProtoconNet/mitum-credential/operation/credential"
 	"github.com/ProtoconNet/mitum-currency/v3/operation/currency"
 	extensioncurrency "github.com/ProtoconNet/mitum-currency/v3/operation/extension"
@@ -27,16 +26,14 @@ func CheckDuplication(opr *currencyprocessor.OperationProcessor, op base.Operati
 
 	var duplicationTypeSenderID string
 	var duplicationTypeCurrencyID string
-	var duplicationTypeContractCredentialID string
-	var duplicationTypeContractTimestampID string
-	var duplicationTypeContractNFTCollectionID string
+	var duplicationTypeContract string
 	var newAddresses []base.Address
 
 	switch t := op.(type) {
-	case currency.CreateAccounts:
-		fact, ok := t.Fact().(currency.CreateAccountsFact)
+	case currency.CreateAccount:
+		fact, ok := t.Fact().(currency.CreateAccountFact)
 		if !ok {
-			return errors.Errorf("expected CreateAccountsFact, not %T", t.Fact())
+			return errors.Errorf("expected CreateAccountFact, not %T", t.Fact())
 		}
 		as, err := fact.Targets()
 		if err != nil {
@@ -44,35 +41,35 @@ func CheckDuplication(opr *currencyprocessor.OperationProcessor, op base.Operati
 		}
 		newAddresses = as
 		duplicationTypeSenderID = fact.Sender().String()
-	case currency.KeyUpdater:
-		fact, ok := t.Fact().(currency.KeyUpdaterFact)
+	case currency.UpdateKey:
+		fact, ok := t.Fact().(currency.UpdateKeyFact)
 		if !ok {
-			return errors.Errorf("expected KeyUpdaterFact, not %T", t.Fact())
+			return errors.Errorf("expected UpdateKeyFact, not %T", t.Fact())
 		}
 		duplicationTypeSenderID = fact.Target().String()
-	case currency.Transfers:
-		fact, ok := t.Fact().(currency.TransfersFact)
+	case currency.Transfer:
+		fact, ok := t.Fact().(currency.TransferFact)
 		if !ok {
-			return errors.Errorf("expected TransfersFact, not %T", t.Fact())
+			return errors.Errorf("expected TransferFact, not %T", t.Fact())
 		}
 		duplicationTypeSenderID = fact.Sender().String()
-	case currency.CurrencyRegister:
-		fact, ok := t.Fact().(currency.CurrencyRegisterFact)
+	case currency.RegisterCurrency:
+		fact, ok := t.Fact().(currency.RegisterCurrencyFact)
 		if !ok {
-			return errors.Errorf("expected CurrencyRegisterFact, not %T", t.Fact())
+			return errors.Errorf("expected RegisterCurrencyFact, not %T", t.Fact())
 		}
 		duplicationTypeCurrencyID = fact.Currency().Currency().String()
-	case currency.CurrencyPolicyUpdater:
-		fact, ok := t.Fact().(currency.CurrencyPolicyUpdaterFact)
+	case currency.UpdateCurrency:
+		fact, ok := t.Fact().(currency.UpdateCurrencyFact)
 		if !ok {
-			return errors.Errorf("expected CurrencyPolicyUpdaterFact, not %T", t.Fact())
+			return errors.Errorf("expected UpdateCurrencyFact, not %T", t.Fact())
 		}
 		duplicationTypeSenderID = fact.Currency().String()
-	case currency.SuffrageInflation:
-	case extensioncurrency.CreateContractAccounts:
-		fact, ok := t.Fact().(extensioncurrency.CreateContractAccountsFact)
+	case currency.Mint:
+	case extensioncurrency.CreateContractAccount:
+		fact, ok := t.Fact().(extensioncurrency.CreateContractAccountFact)
 		if !ok {
-			return errors.Errorf("expected CreateContractAccountsFact, not %T", t.Fact())
+			return errors.Errorf("expected CreateContractAccountFact, not %T", t.Fact())
 		}
 		as, err := fact.Targets()
 		if err != nil {
@@ -80,23 +77,23 @@ func CheckDuplication(opr *currencyprocessor.OperationProcessor, op base.Operati
 		}
 		newAddresses = as
 		duplicationTypeSenderID = fact.Sender().String()
-	case extensioncurrency.Withdraws:
-		fact, ok := t.Fact().(extensioncurrency.WithdrawsFact)
+	case extensioncurrency.Withdraw:
+		fact, ok := t.Fact().(extensioncurrency.WithdrawFact)
 		if !ok {
-			return errors.Errorf("expected WithdrawsFact, not %T", t.Fact())
+			return errors.Errorf("expected WithdrawFact, not %T", t.Fact())
 		}
 		duplicationTypeSenderID = fact.Sender().String()
-	case nft.CollectionRegister:
-		fact, ok := t.Fact().(nft.CollectionRegisterFact)
+	case nft.CreateCollection:
+		fact, ok := t.Fact().(nft.CreateCollectionFact)
 		if !ok {
-			return errors.Errorf("expected CollectionRegisterFact, not %T", t.Fact())
+			return errors.Errorf("expected CreateCollectionFact, not %T", t.Fact())
 		}
 		duplicationTypeSenderID = fact.Sender().String()
-		duplicationTypeContractNFTCollectionID = fact.Contract().String() + "-" + fact.Collection().String()
-	case nft.CollectionPolicyUpdater:
-		fact, ok := t.Fact().(nft.CollectionPolicyUpdaterFact)
+		duplicationTypeContract = fact.Contract().String()
+	case nft.UpdateCollectionPolicy:
+		fact, ok := t.Fact().(nft.UpdateCollectionPolicyFact)
 		if !ok {
-			return errors.Errorf("expected CollectionPolicyUpdaterFact, not %T", t.Fact())
+			return errors.Errorf("expected UpdateCollectionPolicyFact, not %T", t.Fact())
 		}
 		duplicationTypeSenderID = fact.Sender().String()
 	case nft.Mint:
@@ -105,10 +102,10 @@ func CheckDuplication(opr *currencyprocessor.OperationProcessor, op base.Operati
 			return errors.Errorf("expected MintFact, not %T", t.Fact())
 		}
 		duplicationTypeSenderID = fact.Sender().String()
-	case nft.NFTTransfer:
-		fact, ok := t.Fact().(nft.NFTTransferFact)
+	case nft.Transfer:
+		fact, ok := t.Fact().(nft.TransferFact)
 		if !ok {
-			return errors.Errorf("expected NFTTransferFact, not %T", t.Fact())
+			return errors.Errorf("expected TransferFact, not %T", t.Fact())
 		}
 		duplicationTypeSenderID = fact.Sender().String()
 	case nft.Delegate:
@@ -123,48 +120,48 @@ func CheckDuplication(opr *currencyprocessor.OperationProcessor, op base.Operati
 			return errors.Errorf("expected ApproveFact, not %T", t.Fact())
 		}
 		duplicationTypeSenderID = fact.Sender().String()
-	case nft.NFTSign:
-		fact, ok := t.Fact().(nft.NFTSignFact)
+	case nft.Sign:
+		fact, ok := t.Fact().(nft.SignFact)
 		if !ok {
-			return errors.Errorf("expected NFTSignFact, not %T", t.Fact())
+			return errors.Errorf("expected SignFact, not %T", t.Fact())
 		}
 		duplicationTypeSenderID = fact.Sender().String()
-	case timestamp.ServiceRegister:
-		fact, ok := t.Fact().(timestamp.ServiceRegisterFact)
+	case timestamp.CreateService:
+		fact, ok := t.Fact().(timestamp.CreateServiceFact)
 		if !ok {
-			return errors.Errorf("expected ServiceRegisterFact, not %T", t.Fact())
+			return errors.Errorf("expected CreateServiceFact, not %T", t.Fact())
 		}
 		duplicationTypeSenderID = fact.Sender().String()
-		duplicationTypeContractTimestampID = fact.Target().String() + "-" + fact.Service().String()
+		duplicationTypeContract = fact.Target().String()
 	case timestamp.Append:
 		fact, ok := t.Fact().(timestamp.AppendFact)
 		if !ok {
 			return errors.Errorf("expected AppendFact, not %T", t.Fact())
 		}
 		duplicationTypeSenderID = fact.Sender().String()
-	case credential.CreateCredentialService:
-		fact, ok := t.Fact().(credential.CreateCredentialServiceFact)
+	case credential.CreateService:
+		fact, ok := t.Fact().(credential.CreateServiceFact)
 		if !ok {
-			return errors.Errorf("expected CreateCredentialServiceFact, not %T", t.Fact())
+			return errors.Errorf("expected CreateServiceFact, not %T", t.Fact())
 		}
 		duplicationTypeSenderID = fact.Sender().String()
-		duplicationTypeContractCredentialID = fact.Contract().String() + "-" + fact.CredentialServiceID().String()
+		duplicationTypeContract = fact.Contract().String()
 	case credential.AddTemplate:
 		fact, ok := t.Fact().(credential.AddTemplateFact)
 		if !ok {
 			return errors.Errorf("expected AddTemplateFact, not %T", t.Fact())
 		}
 		duplicationTypeSenderID = fact.Sender().String()
-	case credential.AssignCredentials:
-		fact, ok := t.Fact().(credential.AssignCredentialsFact)
+	case credential.Assign:
+		fact, ok := t.Fact().(credential.AssignFact)
 		if !ok {
-			return errors.Errorf("expected AssignCredentialsFact, not %T", t.Fact())
+			return errors.Errorf("expected AssignFact, not %T", t.Fact())
 		}
 		duplicationTypeSenderID = fact.Sender().String()
-	case credential.RevokeCredentials:
-		fact, ok := t.Fact().(credential.AssignCredentialsFact)
+	case credential.Revoke:
+		fact, ok := t.Fact().(credential.RevokeFact)
 		if !ok {
-			return errors.Errorf("expected RevokeCredentials, not %T", t.Fact())
+			return errors.Errorf("expected RevokeFact, not %T", t.Fact())
 		}
 		duplicationTypeSenderID = fact.Sender().String()
 	default:
@@ -173,7 +170,6 @@ func CheckDuplication(opr *currencyprocessor.OperationProcessor, op base.Operati
 
 	if len(duplicationTypeSenderID) > 0 {
 		if _, found := opr.Duplicated[duplicationTypeSenderID]; found {
-			fmt.Println(">>>>>>>>>>>> duplication sender")
 			return errors.Errorf("proposal cannot have duplicate sender, %v", duplicationTypeSenderID)
 		}
 
@@ -189,35 +185,15 @@ func CheckDuplication(opr *currencyprocessor.OperationProcessor, op base.Operati
 
 		opr.Duplicated[duplicationTypeSenderID] = DuplicationTypeCurrency
 	}
-	if len(duplicationTypeContractNFTCollectionID) > 0 {
-		if _, found := opr.Duplicated[duplicationTypeContractNFTCollectionID]; found {
+	if len(duplicationTypeContract) > 0 {
+		if _, found := opr.Duplicated[duplicationTypeSenderID]; found {
 			return errors.Errorf(
-				"cannot register a duplicate combination of contract-collection, %v within a proposal",
-				duplicationTypeContractNFTCollectionID,
+				"cannot use a duplicated contract for registering in contract model , %v within a proposal",
+				duplicationTypeSenderID,
 			)
 		}
 
-		opr.Duplicated[duplicationTypeContractNFTCollectionID] = DuplicationTypeContractNFTCollection
-	}
-	if len(duplicationTypeContractTimestampID) > 0 {
-		if _, found := opr.Duplicated[duplicationTypeContractTimestampID]; found {
-			return errors.Errorf(
-				"cannot register a duplicate combination of contract-timestamp, %v within a proposal",
-				duplicationTypeContractTimestampID,
-			)
-		}
-
-		opr.Duplicated[duplicationTypeContractTimestampID] = DuplicationTypeContractTimeStamp
-	}
-	if len(duplicationTypeContractCredentialID) > 0 {
-		if _, found := opr.Duplicated[duplicationTypeContractCredentialID]; found {
-			return errors.Errorf(
-				"cannot register a duplicate combination of contract-credential, %v within a proposal",
-				duplicationTypeContractCredentialID,
-			)
-		}
-
-		opr.Duplicated[duplicationTypeContractCredentialID] = DuplicationTypeContractCredential
+		opr.Duplicated[duplicationTypeSenderID] = DuplicationTypeContractNFTCollection
 	}
 
 	if len(newAddresses) > 0 {

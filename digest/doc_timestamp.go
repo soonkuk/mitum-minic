@@ -16,7 +16,7 @@ type TimeStampServiceDesignDoc struct {
 	tsd types.Design
 }
 
-// NewBalanceDoc gets the State of Amount
+// NewTimeStampServiceDesignDoc gets the State of TimeStampServiceDesign
 func NewTimeStampServiceDesignDoc(st base.State, enc encoder.Encoder) (TimeStampServiceDesignDoc, error) {
 	tsd, err := timestampservice.StateServiceDesignValue(st)
 
@@ -42,10 +42,9 @@ func (doc TimeStampServiceDesignDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	caAddr, serviceID, err := timestampservice.ParseStateKey(doc.st.Key())
+	parsedKey, err := timestampservice.ParseStateKey(doc.st.Key())
 
-	m["contract"] = caAddr
-	m["timestampservice"] = serviceID
+	m["contract"] = parsedKey[1]
 	m["height"] = doc.st.Height()
 	m["isItem"] = false
 
@@ -82,13 +81,12 @@ func (doc TimeStampItemDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	caAddr, serviceID, err := timestampservice.ParseStateKey(doc.st.Key())
+	parsedKey, err := timestampservice.ParseStateKey(doc.st.Key())
 	if err != nil {
 		return nil, err
 	}
 
-	m["contract"] = caAddr
-	m["timestampservice"] = serviceID
+	m["contract"] = parsedKey[1]
 	m["project"] = doc.tsItem.ProjectID()
 	m["timestampidx"] = doc.tsItem.TimestampID()
 	m["height"] = doc.st.Height()

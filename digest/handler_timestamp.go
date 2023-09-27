@@ -35,24 +35,8 @@ func (hd *Handlers) handleTimeStamp(w http.ResponseWriter, r *http.Request) {
 	}
 	contract = s
 
-	var service string
-	s, found = mux.Vars(r)["service"]
-	if !found {
-		currencydigest.HTTP2ProblemWithError(w, errors.Errorf("empty service id"), http.StatusNotFound)
-
-		return
-	}
-
-	s = strings.TrimSpace(s)
-	if len(s) < 1 {
-		currencydigest.HTTP2ProblemWithError(w, errors.Errorf("empty service id"), http.StatusBadRequest)
-
-		return
-	}
-	service = s
-
 	if v, err, shared := hd.rg.Do(cachekey, func() (interface{}, error) {
-		return hd.handleTimeStampInGroup(contract, service)
+		return hd.handleTimeStampInGroup(contract)
 	}); err != nil {
 		currencydigest.HTTP2HandleError(w, err)
 	} else {
@@ -64,11 +48,11 @@ func (hd *Handlers) handleTimeStamp(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (hd *Handlers) handleTimeStampInGroup(contract, service string) ([]byte, error) {
+func (hd *Handlers) handleTimeStampInGroup(contract string) ([]byte, error) {
 	var de types.Design
 	var st base.State
 
-	de, st, err := Timestamp(hd.database, contract, service)
+	de, st, err := Timestamp(hd.database, contract)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +65,7 @@ func (hd *Handlers) handleTimeStampInGroup(contract, service string) ([]byte, er
 }
 
 func (hd *Handlers) buildTimeStamp(contract string, de types.Design, st base.State) (currencydigest.Hal, error) {
-	h, err := hd.combineURL(HandlerPathTimeStampService, "contract", contract, "service", de.Service().String())
+	h, err := hd.combineURL(HandlerPathTimeStampService, "contract", contract)
 	if err != nil {
 		return nil, err
 	}
@@ -128,22 +112,6 @@ func (hd *Handlers) handleTimeStampItem(w http.ResponseWriter, r *http.Request) 
 	}
 	contract = s
 
-	var service string
-	s, found = mux.Vars(r)["service"]
-	if !found {
-		currencydigest.HTTP2ProblemWithError(w, errors.Errorf("empty service id"), http.StatusNotFound)
-
-		return
-	}
-
-	s = strings.TrimSpace(s)
-	if len(s) < 1 {
-		currencydigest.HTTP2ProblemWithError(w, errors.Errorf("empty service id"), http.StatusBadRequest)
-
-		return
-	}
-	service = s
-
 	var project string
 	s, found = mux.Vars(r)["project"]
 	if !found {
@@ -169,7 +137,7 @@ func (hd *Handlers) handleTimeStampItem(w http.ResponseWriter, r *http.Request) 
 	}
 
 	if v, err, shared := hd.rg.Do(cachekey, func() (interface{}, error) {
-		return hd.handleTimeStampItemInGroup(contract, service, project, idx)
+		return hd.handleTimeStampItemInGroup(contract, project, idx)
 	}); err != nil {
 		currencydigest.HTTP2HandleError(w, err)
 	} else {
@@ -181,24 +149,24 @@ func (hd *Handlers) handleTimeStampItem(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-func (hd *Handlers) handleTimeStampItemInGroup(contract, service, project string, idx uint64) ([]byte, error) {
+func (hd *Handlers) handleTimeStampItemInGroup(contract, project string, idx uint64) ([]byte, error) {
 	var it types.TimeStampItem
 	var st base.State
 
-	it, st, err := TimestampItem(hd.database, contract, service, project, idx)
+	it, st, err := TimestampItem(hd.database, contract, project, idx)
 	if err != nil {
 		return nil, err
 	}
 
-	i, err := hd.buildTimeStampItem(contract, service, it, st)
+	i, err := hd.buildTimeStampItem(contract, it, st)
 	if err != nil {
 		return nil, err
 	}
 	return hd.encoder.Marshal(i)
 }
 
-func (hd *Handlers) buildTimeStampItem(contract, service string, it types.TimeStampItem, st base.State) (currencydigest.Hal, error) {
-	h, err := hd.combineURL(HandlerPathTimeStampItem, "contract", contract, "service", service, "project", it.ProjectID(), "tid", strconv.FormatUint(it.TimestampID(), 10))
+func (hd *Handlers) buildTimeStampItem(contract string, it types.TimeStampItem, st base.State) (currencydigest.Hal, error) {
+	h, err := hd.combineURL(HandlerPathTimeStampItem, "contract", contract, "project", it.ProjectID(), "tid", strconv.FormatUint(it.TimestampID(), 10))
 	if err != nil {
 		return nil, err
 	}
