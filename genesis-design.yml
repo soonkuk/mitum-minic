@@ -3,7 +3,7 @@ facts:
     nodes:
       - _hint: currency-node-v0.0.1
         address: no0sas
-        publickey: bXTT1hoetSKYPUmfu3bMRcs8aU342MTTzhgeCQ1bTavBmpu
+        publickey:
 
   - _hint: currency-genesis-network-policy-fact-v0.0.1
     policy:
@@ -15,13 +15,12 @@ facts:
         limit: 1
       max_suffrage_size: 3
   - _hint: mitum-currency-register-genesis-currency-operation-fact-v0.0.1
-    genesis_node_key: bXTT1hoetSKYPUmfu3bMRcs8aU342MTTzhgeCQ1bTavBmpu
+    genesis_node_key:
     keys:
       _hint: mitum-currency-keys-v0.0.1
       keys:
         - _hint: mitum-currency-key-v0.0.1
-          key: 26vyVJFoLZqVPmP8UADoNCsEyJYD4498vdy7uoiHgFKRUmpu
-          # privatekey: EQmEPFeUTf6Asgs1aoHEdfYndFYkVMHrc5F1X4EcGZXympr
+          key:
           weight: 100
       threshold: 100
     currencies:
@@ -36,7 +35,7 @@ facts:
           new_account_min_balance: "1"
           feeer:
             _hint: mitum-currency-fixed-feeer-v0.0.1
-            receiver: Hwrw5wwhANUPSQNmkJ91Pnu57T4cK6HsLvZXKTJbQbERmca
+            receiver:
             amount: "1"
             exchange_min_amount: "1"
         aggregate: "100000000000000000000000000000000000000000"

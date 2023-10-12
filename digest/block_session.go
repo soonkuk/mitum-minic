@@ -3,20 +3,19 @@ package digest
 import (
 	"context"
 	"fmt"
-	currencydigest "github.com/ProtoconNet/mitum-currency/v3/digest"
 	"sync"
 	"time"
 
-	"github.com/pkg/errors"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-
+	currencydigest "github.com/ProtoconNet/mitum-currency/v3/digest"
 	"github.com/ProtoconNet/mitum-currency/v3/digest/isaac"
 	statecurrency "github.com/ProtoconNet/mitum-currency/v3/state/currency"
-
+	stateextension "github.com/ProtoconNet/mitum-currency/v3/state/extension"
 	mitumbase "github.com/ProtoconNet/mitum2/base"
 	mitumutil "github.com/ProtoconNet/mitum2/util"
 	"github.com/ProtoconNet/mitum2/util/fixedtree"
+	"github.com/pkg/errors"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var bulkWriteLimit = 500
@@ -138,6 +137,12 @@ func (bs *BlockSession) Commit(ctx context.Context) error {
 		}
 	}
 
+	if len(bs.contractAccountModels) > 0 {
+		if err := bs.writeModels(ctx, defaultColNameContractAccount, bs.contractAccountModels); err != nil {
+			return err
+		}
+	}
+
 	if len(bs.nftCollectionModels) > 0 {
 		if err := bs.writeModels(ctx, defaultColNameNFTCollection, bs.nftCollectionModels); err != nil {
 			return err
@@ -239,7 +244,11 @@ func (bs *BlockSession) prepareOperationsTree() error {
 
 	if err := bs.opstree.Traverse(func(_ uint64, no fixedtree.Node) (bool, error) {
 		nno := no.(mitumbase.OperationFixedtreeNode)
-		nodes[nno.Key()] = nno
+		if nno.InState() {
+			nodes[nno.Key()] = nno
+		} else {
+			nodes[nno.Key()[:len(nno.Key())-1]] = nno
+		}
 
 		return true, nil
 	}); err != nil {
@@ -336,6 +345,7 @@ func (bs *BlockSession) prepareAccounts() error {
 
 	var accountModels []mongo.WriteModel
 	var balanceModels []mongo.WriteModel
+	var contractAccountModels []mongo.WriteModel
 	for i := range bs.sts {
 		st := bs.sts[i]
 
@@ -353,12 +363,19 @@ func (bs *BlockSession) prepareAccounts() error {
 			}
 			balanceModels = append(balanceModels, j...)
 			bs.balanceAddressList = append(bs.balanceAddressList, address)
+		case stateextension.IsStateContractAccountKey(st.Key()):
+			j, err := bs.handleContractAccountState(st)
+			if err != nil {
+				return err
+			}
+			contractAccountModels = append(contractAccountModels, j...)
 		default:
 			continue
 		}
 	}
 
 	bs.accountModels = accountModels
+	bs.contractAccountModels = contractAccountModels
 	bs.balanceModels = balanceModels
 
 	return nil
