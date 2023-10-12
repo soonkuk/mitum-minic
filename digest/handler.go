@@ -19,17 +19,17 @@ import (
 )
 
 var (
-	HandlerPathNFTOperators     = `/nft/{contract:.*}/collection/{collection:[A-Z0-9][A-Z0-9_\.\!\$\*\@]*[A-Z0-9]+}/account/{address:(?i)` + base.REStringAddressString + `}/operators` // revive:disable-line:line-length-limit
-	HandlerPathNFTCollection    = `/nft/{contract:.*}/collection/{collection:[A-Z0-9][A-Z0-9_\.\!\$\*\@]*[A-Z0-9]+}`
-	HandlerPathNFT              = `/nft/{contract:.*}/collection/{collection:[A-Z0-9][A-Z0-9_\.\!\$\*\@]*[A-Z0-9]+}/nft/{id:.*}`
-	HandlerPathNFTs             = `/nft/{contract:.*}/collection/{collection:[A-Z0-9][A-Z0-9_\.\!\$\*\@]*[A-Z0-9]+}/nfts`
-	HandlerPathDIDIssuer        = `/did/{contract:.+}/issuer/{serviceid:.+}`
-	HandlerPathDIDCredential    = `/did/{contract:.+}/issuer/{serviceid:.+}/template/{templateid:.+}/credential/{credentialid:.+}`
-	HandlerPathDIDTemplate      = `/did/{contract:.+}/issuer/{serviceid:.+}/template/{templateid:.+}`
-	HandlerPathDIDCredentials   = `/did/{contract:.+}/issuer/{serviceid:.+}/template/{templateid:.+}/credentials`
-	HandlerPathDIDHolder        = `/did/{contract:.+}/issuer/{serviceid:.+}/holder/{holder:(?i)` + base.REStringAddressString + `}` // revive:disable-line:line-length-limit
-	HandlerPathTimeStampService = `/timestamp/{contract:.*}/service/{service:.*}`
-	HandlerPathTimeStampItem    = `/timestamp/{contract:.*}/service/{service:.*}/project/{project:.*}/id/{tid:[0-9]+}`
+	HandlerPathNFTOperators     = `/nft/{contract:.*}/account/{address:(?i)` + base.REStringAddressString + `}/operators` // revive:disable-line:line-length-limit
+	HandlerPathNFTCollection    = `/nft/{contract:.*}/collection`
+	HandlerPathNFT              = `/nft/{contract:.*}/{id:.*}`
+	HandlerPathNFTs             = `/nft/{contract:.*}/nfts`
+	HandlerPathDIDIssuer        = `/did/{contract:.+}/issuer`
+	HandlerPathDIDCredential    = `/did/{contract:.+}/template/{templateid:.+}/credential/{credentialid:.+}`
+	HandlerPathDIDTemplate      = `/did/{contract:.+}/template/{templateid:.+}`
+	HandlerPathDIDCredentials   = `/did/{contract:.+}/template/{templateid:.+}/credentials`
+	HandlerPathDIDHolder        = `/did/{contract:.+}/holder/{holder:(?i)` + base.REStringAddressString + `}` // revive:disable-line:line-length-limit
+	HandlerPathTimeStampService = `/timestamp/{contract:.*}/service`
+	HandlerPathTimeStampItem    = `/timestamp/{contract:.*}/project/{project:.+}/id/{tid:[0-9]+}`
 )
 
 func init() {
