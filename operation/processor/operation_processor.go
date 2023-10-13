@@ -13,11 +13,9 @@ import (
 )
 
 const (
-	DuplicationTypeSender                currencytypes.DuplicationType = "sender"
-	DuplicationTypeCurrency              currencytypes.DuplicationType = "currency"
-	DuplicationTypeContractCredential    currencytypes.DuplicationType = "contract-credential"
-	DuplicationTypeContractTimeStamp     currencytypes.DuplicationType = "contract-timestamp"
-	DuplicationTypeContractNFTCollection currencytypes.DuplicationType = "contract-collection"
+	DuplicationTypeSender   currencytypes.DuplicationType = "sender"
+	DuplicationTypeCurrency currencytypes.DuplicationType = "currency"
+	DuplicationTypeContract currencytypes.DuplicationType = "contract"
 )
 
 func CheckDuplication(opr *currencyprocessor.OperationProcessor, op base.Operation) error {
@@ -176,24 +174,24 @@ func CheckDuplication(opr *currencyprocessor.OperationProcessor, op base.Operati
 		opr.Duplicated[duplicationTypeSenderID] = DuplicationTypeSender
 	}
 	if len(duplicationTypeCurrencyID) > 0 {
-		if _, found := opr.Duplicated[duplicationTypeSenderID]; found {
+		if _, found := opr.Duplicated[duplicationTypeCurrencyID]; found {
 			return errors.Errorf(
 				"cannot register duplicate currency id, %v within a proposal",
 				duplicationTypeCurrencyID,
 			)
 		}
 
-		opr.Duplicated[duplicationTypeSenderID] = DuplicationTypeCurrency
+		opr.Duplicated[duplicationTypeCurrencyID] = DuplicationTypeCurrency
 	}
 	if len(duplicationTypeContract) > 0 {
-		if _, found := opr.Duplicated[duplicationTypeSenderID]; found {
+		if _, found := opr.Duplicated[duplicationTypeContract]; found {
 			return errors.Errorf(
 				"cannot use a duplicated contract for registering in contract model , %v within a proposal",
 				duplicationTypeSenderID,
 			)
 		}
 
-		opr.Duplicated[duplicationTypeSenderID] = DuplicationTypeContractNFTCollection
+		opr.Duplicated[duplicationTypeContract] = DuplicationTypeContract
 	}
 
 	if len(newAddresses) > 0 {
