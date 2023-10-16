@@ -125,7 +125,7 @@ func NFTOperators(
 	contract, account string,
 ) (*types.OperatorsBook, error) {
 	filter := util.NewBSONFilter("contract", contract)
-	filter = filter.Add("account", account)
+	filter = filter.Add("address", account)
 
 	var operators *types.OperatorsBook
 	var sta mitumbase.State

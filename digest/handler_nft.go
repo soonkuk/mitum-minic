@@ -286,7 +286,7 @@ func (hd *Handlers) handleNFTOperators(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	account, err, status := parseRequest(w, r, "account")
+	account, err, status := parseRequest(w, r, "address")
 	if err != nil {
 		currencydigest.HTTP2ProblemWithError(w, err, status)
 
@@ -319,7 +319,7 @@ func (hd *Handlers) handleNFTOperatorsInGroup(contract, account string) (interfa
 }
 
 func (hd *Handlers) buildNFTOperatorsHal(contract, account string, operators types.OperatorsBook) (currencydigest.Hal, error) {
-	h, err := hd.combineURL(HandlerPathNFTOperators, "contract", contract, "account", account)
+	h, err := hd.combineURL(HandlerPathNFTOperators, "contract", contract, "address", account)
 	if err != nil {
 		return nil, err
 	}
