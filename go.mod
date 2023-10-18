@@ -7,6 +7,7 @@ require (
 	github.com/ProtoconNet/mitum-currency/v3 v3.0.0-alpha.0.20231013162211-895efedc35ae
 	github.com/ProtoconNet/mitum-nft/v2 v2.0.0-20231016113041-f378dc159b4d
 	github.com/ProtoconNet/mitum-timestamp v0.0.0-20231013163502-c3835ba9b150
+	github.com/ProtoconNet/mitum-token v0.0.0-20231018160050-9442a29e4056
 	github.com/ProtoconNet/mitum2 v0.0.0-20231006031328-cc14784a72b1
 	github.com/alecthomas/kong v0.8.0
 	github.com/arl/statsviz v0.5.2

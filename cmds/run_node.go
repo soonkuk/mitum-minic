@@ -14,6 +14,7 @@ import (
 	"github.com/ProtoconNet/mitum-minic/digest"
 	nftcmds "github.com/ProtoconNet/mitum-nft/v2/cmds"
 	timestampcmds "github.com/ProtoconNet/mitum-timestamp/cmds"
+	tokencmds "github.com/ProtoconNet/mitum-token/cmds"
 	"github.com/ProtoconNet/mitum2/base"
 	"github.com/ProtoconNet/mitum2/isaac"
 	isaacnetwork "github.com/ProtoconNet/mitum2/isaac/network"
@@ -83,7 +84,7 @@ func (cmd *RunCommand) Run(pctx context.Context) error {
 		PreAddOK(nftcmds.PNameOperationProcessorsMap, nftcmds.POperationProcessorsMap).
 		PreAddOK(timestampcmds.PNameOperationProcessorsMap, timestampcmds.POperationProcessorsMap).
 		PreAddOK(credentialcmds.PNameOperationProcessorsMap, credentialcmds.POperationProcessorsMap).
-		PreAddOK(credentialcmds.PNameOperationProcessorsMap, credentialcmds.POperationProcessorsMap).
+		PreAddOK(tokencmds.PNameOperationProcessorsMap, tokencmds.POperationProcessorsMap).
 		PreAddOK(PNameOperationProcessorsMap, POperationProcessorsMap).
 		PreAddOK(ps.Name("when-new-block-saved-in-consensus-state-func"), cmd.pWhenNewBlockSavedInConsensusStateFunc).
 		PreAddOK(ps.Name("when-new-block-confirmed-func"), cmd.pWhenNewBlockConfirmed)

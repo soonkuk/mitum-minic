@@ -17,4 +17,6 @@ var (
 	defaultColNameHolderDID       = "digest_did_holder_did"
 	defaultColNameTemplate        = "digest_did_template"
 	defaultColNameTimeStamp       = "digest_ts"
+	defaultColNameToken           = "digest_token"
+	defaultColNameTokenBalance    = "digest_token_bl"
 )

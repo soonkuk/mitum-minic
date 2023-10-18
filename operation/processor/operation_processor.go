@@ -8,6 +8,7 @@ import (
 	currencytypes "github.com/ProtoconNet/mitum-currency/v3/types"
 	"github.com/ProtoconNet/mitum-nft/v2/operation/nft"
 	"github.com/ProtoconNet/mitum-timestamp/operation/timestamp"
+	"github.com/ProtoconNet/mitum-token/operation/token"
 	"github.com/ProtoconNet/mitum2/base"
 	"github.com/pkg/errors"
 )
@@ -160,6 +161,43 @@ func CheckDuplication(opr *currencyprocessor.OperationProcessor, op base.Operati
 		fact, ok := t.Fact().(credential.RevokeFact)
 		if !ok {
 			return errors.Errorf("expected RevokeFact, not %T", t.Fact())
+		}
+		duplicationTypeSenderID = fact.Sender().String()
+	case token.Mint:
+		fact, ok := t.Fact().(token.MintFact)
+		if !ok {
+			return errors.Errorf("expected MintFact, not %T", t.Fact())
+		}
+		duplicationTypeSenderID = fact.Sender().String()
+	case token.RegisterToken:
+		fact, ok := t.Fact().(token.RegisterTokenFact)
+		if !ok {
+			return errors.Errorf("expected RegisterTokenFact, not %T", t.Fact())
+		}
+		duplicationTypeSenderID = fact.Sender().String()
+		duplicationTypeContract = fact.Contract().String()
+	case token.Burn:
+		fact, ok := t.Fact().(token.BurnFact)
+		if !ok {
+			return errors.Errorf("expected BurnFact, not %T", t.Fact())
+		}
+		duplicationTypeSenderID = fact.Sender().String()
+	case token.Approve:
+		fact, ok := t.Fact().(token.ApproveFact)
+		if !ok {
+			return errors.Errorf("expected ApproveFact, not %T", t.Fact())
+		}
+		duplicationTypeSenderID = fact.Sender().String()
+	case token.Transfer:
+		fact, ok := t.Fact().(token.TransferFact)
+		if !ok {
+			return errors.Errorf("expected TransferFact, not %T", t.Fact())
+		}
+		duplicationTypeSenderID = fact.Sender().String()
+	case token.TransferFrom:
+		fact, ok := t.Fact().(token.TransferFromFact)
+		if !ok {
+			return errors.Errorf("expected TransferFromFact, not %T", t.Fact())
 		}
 		duplicationTypeSenderID = fact.Sender().String()
 	default:

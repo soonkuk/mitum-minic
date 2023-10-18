@@ -30,6 +30,8 @@ var (
 	HandlerPathDIDHolder        = `/did/{contract:.+}/holder/{holder:(?i)` + base.REStringAddressString + `}` // revive:disable-line:line-length-limit
 	HandlerPathTimeStampService = `/timestamp/{contract:.*}/service`
 	HandlerPathTimeStampItem    = `/timestamp/{contract:.*}/project/{project:.+}/id/{tid:[0-9]+}`
+	HandlerPathToken            = `/token/{contract:.*}`
+	HandlerPathTokenBalance     = `/token/{contract:.*}/account/{address:(?i)` + base.REStringAddressString + `}` // revive:disable-line:line-length-limit
 )
 
 func init() {
@@ -140,6 +142,10 @@ func (hd *Handlers) setHandlers() {
 	_ = hd.setHandler(HandlerPathTimeStampItem, hd.handleTimeStampItem, true).
 		Methods(http.MethodOptions, "GET")
 	_ = hd.setHandler(HandlerPathTimeStampService, hd.handleTimeStamp, true).
+		Methods(http.MethodOptions, "GET")
+	_ = hd.setHandler(HandlerPathTokenBalance, hd.handleTokenBalance, true).
+		Methods(http.MethodOptions, "GET")
+	_ = hd.setHandler(HandlerPathToken, hd.handleToken, true).
 		Methods(http.MethodOptions, "GET")
 }
 

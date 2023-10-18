@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	timestampcmds "github.com/ProtoconNet/mitum-timestamp/cmds"
+	tokencmds "github.com/ProtoconNet/mitum-token/cmds"
 	"os"
 
 	"github.com/ProtoconNet/mitum-minic/cmds"
@@ -39,6 +40,7 @@ var CLI struct { //nolint:govet //...
 		NFT        nftcmds.NFTCommand               `cmd:"" help:"nft operation"`
 		Credential credentialcmds.CredentialCommand `cmd:"" help:"credential operation"`
 		Timestamp  timestampcmds.TimestampCommand   `cmd:"" help:"timestamp operation"`
+		Token      tokencmds.TokenCommand           `cmd:"" help:"token operation"`
 	} `cmd:"" help:"create operation"`
 	Network struct {
 		Client cmds.NetworkClientCommand `cmd:"" help:"network client"`
