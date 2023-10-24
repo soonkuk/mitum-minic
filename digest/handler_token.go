@@ -103,7 +103,7 @@ func (hd *Handlers) handleTokenBalanceInGroup(contract, account string) (interfa
 }
 
 func (hd *Handlers) buildTokenBalanceHal(contract, account string, amount common.Big) (currencydigest.Hal, error) {
-	h, err := hd.combineURL(HandlerPathToken, "contract", contract, "address", account)
+	h, err := hd.combineURL(HandlerPathTokenBalance, "contract", contract, "address", account)
 	if err != nil {
 		return nil, err
 	}
