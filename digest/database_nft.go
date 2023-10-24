@@ -7,8 +7,10 @@ import (
 	"github.com/ProtoconNet/mitum-nft/v2/state"
 	"github.com/ProtoconNet/mitum-nft/v2/types"
 	mitumbase "github.com/ProtoconNet/mitum2/base"
+	mitumutil "github.com/ProtoconNet/mitum2/util"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"strconv"
 )
 
 func NFTCollection(st *currencydigest.Database, contract string) (*types.Design, error) {
@@ -35,7 +37,7 @@ func NFTCollection(st *currencydigest.Database, contract string) (*types.Design,
 		},
 		options.FindOne().SetSort(util.NewBSONFilter("height", -1).D()),
 	); err != nil {
-		return nil, err
+		return nil, mitumutil.ErrNotFound.WithMessage(err, "nft collection, contract %s", contract)
 	}
 
 	return design, nil
@@ -65,10 +67,60 @@ func NFT(st *currencydigest.Database, contract, idx string) (*types.NFT, error) 
 		},
 		options.FindOne().SetSort(util.NewBSONFilter("height", -1).D()),
 	); err != nil {
-		return nil, err
+		return nil, mitumutil.ErrNotFound.Errorf("nft token, contract %s, nftid %s", contract, idx)
 	}
 
 	return nft, nil
+}
+
+func NFTsByAddress(
+	st *currencydigest.Database,
+	address mitumbase.Address,
+	reverse bool,
+	offset string,
+	limit int64,
+	callback func(string /* nft id */, types.NFT) (bool, error),
+) error {
+	filter, err := buildNFTsFilterByAddress(address, offset, reverse)
+	if err != nil {
+		return err
+	}
+
+	sr := 1
+	if reverse {
+		sr = -1
+	}
+
+	opt := options.Find().SetSort(
+		util.NewBSONFilter("height", sr).D(),
+	)
+
+	switch {
+	case limit <= 0: // no limit
+	case limit > maxLimit:
+		opt = opt.SetLimit(maxLimit)
+	default:
+		opt = opt.SetLimit(limit)
+	}
+
+	return st.DatabaseClient().Find(
+		context.Background(),
+		defaultColNameNFT,
+		filter,
+		func(cursor *mongo.Cursor) (bool, error) {
+			st, err := currencydigest.LoadState(cursor.Decode, st.DatabaseEncoders())
+			if err != nil {
+				return false, err
+			}
+			nft, err := state.StateNFTValue(st)
+			if err != nil {
+				return false, err
+			}
+
+			return callback(strconv.FormatUint(nft.ID(), 10), *nft)
+		},
+		opt,
+	)
 }
 
 func NFTsByCollection(
@@ -148,7 +200,7 @@ func NFTOperators(
 		},
 		options.FindOne().SetSort(util.NewBSONFilter("height", -1).D()),
 	); err != nil {
-		return nil, err
+		return nil, mitumutil.ErrNotFound.WithMessage(err, "nft operators by contract %s and account %s", contract, account)
 	}
 
 	return operators, nil

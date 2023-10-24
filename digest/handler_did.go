@@ -8,10 +8,9 @@ import (
 	"time"
 
 	"github.com/ProtoconNet/mitum2/base"
-	"github.com/pkg/errors"
 )
 
-func (hd *Handlers) handleDIDIssuer(w http.ResponseWriter, r *http.Request) {
+func (hd *Handlers) handleCredentialService(w http.ResponseWriter, r *http.Request) {
 	cacheKey := currencydigest.CacheKeyPath(r)
 	if err := currencydigest.LoadFromCache(hd.cache, cacheKey, w); err == nil {
 		return
@@ -25,7 +24,7 @@ func (hd *Handlers) handleDIDIssuer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if v, err, shared := hd.rg.Do(cacheKey, func() (interface{}, error) {
-		return hd.handleDIDIssuerInGroup(contract)
+		return hd.handleCredentialServiceInGroup(contract)
 	}); err != nil {
 		currencydigest.HTTP2HandleError(w, err)
 	} else {
@@ -36,14 +35,14 @@ func (hd *Handlers) handleDIDIssuer(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (hd *Handlers) handleDIDIssuerInGroup(contract string) (interface{}, error) {
-	switch design, err := DIDService(hd.database, contract); {
+func (hd *Handlers) handleCredentialServiceInGroup(contract string) (interface{}, error) {
+	switch design, err := CredentialService(hd.database, contract); {
 	case err != nil:
-		return nil, err
+		return nil, mitumutil.ErrNotFound.WithMessage(err, "credential service, contract %s", contract)
 	case design == nil:
-		return nil, mitumutil.ErrNotFound.Errorf("issuer design, %v in handleDIDIssuer contract", contract)
+		return nil, mitumutil.ErrNotFound.Errorf("credential service, contract %s", contract)
 	default:
-		hal, err := hd.buildDIDServiceHal(contract, *design)
+		hal, err := hd.buildCredentialServiceHal(contract, *design)
 		if err != nil {
 			return nil, err
 		}
@@ -51,8 +50,8 @@ func (hd *Handlers) handleDIDIssuerInGroup(contract string) (interface{}, error)
 	}
 }
 
-func (hd *Handlers) buildDIDServiceHal(contract string, design types.Design) (currencydigest.Hal, error) {
-	h, err := hd.combineURL(HandlerPathDIDIssuer, "contract", contract)
+func (hd *Handlers) buildCredentialServiceHal(contract string, design types.Design) (currencydigest.Hal, error) {
+	h, err := hd.combineURL(HandlerPathDIDService, "contract", contract)
 	if err != nil {
 		return nil, err
 	}
@@ -101,9 +100,9 @@ func (hd *Handlers) handleCredential(w http.ResponseWriter, r *http.Request) {
 func (hd *Handlers) handleCredentialInGroup(contract, templateID, credentialID string) (interface{}, error) {
 	switch credential, err := Credential(hd.database, contract, templateID, credentialID); {
 	case err != nil:
-		return nil, err
+		return nil, mitumutil.ErrNotFound.WithMessage(err, "credential by contract %s, template %s, id %s", contract, templateID, credentialID)
 	case credential == nil:
-		return nil, mitumutil.ErrNotFound.Errorf("credential, %v in handleCredential", credentialID)
+		return nil, mitumutil.ErrNotFound.Errorf("credential by contract %s, template %s, id %s", contract, templateID, credentialID)
 	default:
 		hal, err := hd.buildCredentialHal(contract, templateID, *credential)
 		if err != nil {
@@ -214,9 +213,9 @@ func (hd *Handlers) handleCredentialsInGroup(
 			return true, nil
 		},
 	); err != nil {
-		return nil, false, err
+		return nil, false, mitumutil.ErrNotFound.WithMessage(err, "credentials by contract %s, template %s", contract, templateID)
 	} else if len(vas) < 1 {
-		return nil, false, errors.Errorf("credentials not found")
+		return nil, false, mitumutil.ErrNotFound.Errorf("credentials by contract %s, template %s", contract, templateID)
 	}
 
 	i, err := hd.buildCredentialsHal(contract, templateID, vas, offset, reverse)
@@ -254,7 +253,7 @@ func (hd *Handlers) buildCredentialsHal(
 	var hal currencydigest.Hal
 	hal = currencydigest.NewBaseHal(vas, currencydigest.NewHalLink(self, nil))
 
-	h, err := hd.combineURL(HandlerPathDIDIssuer, "contract", contract)
+	h, err := hd.combineURL(HandlerPathDIDService, "contract", contract)
 	if err != nil {
 		return nil, err
 	}
@@ -316,9 +315,9 @@ func (hd *Handlers) handleHolderDID(w http.ResponseWriter, r *http.Request) {
 func (hd *Handlers) handleHolderDIDInGroup(contract, holder string) (interface{}, error) {
 	switch did, err := HolderDID(hd.database, contract, holder); {
 	case err != nil:
-		return nil, err
+		return nil, mitumutil.ErrNotFound.WithMessage(err, "DID by contract %s, holder %s", contract, holder)
 	case did == "":
-		return nil, mitumutil.ErrNotFound.Errorf("DID for holder, %v in handleHolderDID", holder)
+		return nil, mitumutil.ErrNotFound.Errorf("DID by contract %s, holder %s", contract, holder)
 	default:
 		hal, err := hd.buildHolderDIDHal(contract, holder, did)
 		if err != nil {
@@ -374,9 +373,9 @@ func (hd *Handlers) handleTemplate(w http.ResponseWriter, r *http.Request) {
 func (hd *Handlers) handleTemplateInGroup(contract, templateID string) (interface{}, error) {
 	switch template, err := Template(hd.database, contract, templateID); {
 	case err != nil:
-		return nil, err
+		return nil, mitumutil.ErrNotFound.WithMessage(err, "template by contract %s, template %s", contract, templateID)
 	case template == nil:
-		return nil, mitumutil.ErrNotFound.Errorf("template, %v in handleTemplate", templateID)
+		return nil, mitumutil.ErrNotFound.Errorf("template by contract %s, template %s", contract, templateID)
 	default:
 		hal, err := hd.buildTemplateHal(contract, templateID, *template)
 		if err != nil {

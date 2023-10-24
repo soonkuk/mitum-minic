@@ -40,20 +40,12 @@ func parseIdxFromPath(s string) (uint64, error) {
 	return i, nil
 }
 
-func buildNFTsFilterByAddress(address base.Address, offset string, reverse bool, collection string) (bson.D, error) {
+func buildNFTsFilterByAddress(address base.Address, offset string, reverse bool) (bson.D, error) {
 	filterA := bson.A{}
 
 	// filter fot matching address
 	filterAddress := bson.D{{"owner", bson.D{{"$in", []string{address.String()}}}}}
 	filterA = append(filterA, filterAddress)
-
-	// if collection query exist, find by collection first
-	if len(collection) > 0 {
-		filterCollection := bson.D{
-			{"collection", bson.D{{"$eq", collection}}},
-		}
-		filterA = append(filterA, filterCollection)
-	}
 
 	// if offset exist, apply offset
 	if len(offset) > 0 {

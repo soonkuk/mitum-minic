@@ -3,12 +3,12 @@ package digest
 import (
 	currencydigest "github.com/ProtoconNet/mitum-currency/v3/digest"
 	"github.com/ProtoconNet/mitum-nft/v2/types"
+	mitumutil "github.com/ProtoconNet/mitum2/util"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/ProtoconNet/mitum2/base"
-	"github.com/pkg/errors"
 )
 
 func (hd *Handlers) handleNFT(w http.ResponseWriter, r *http.Request) {
@@ -202,9 +202,9 @@ func (hd *Handlers) handleNFTsInGroup(
 			return true, nil
 		},
 	); err != nil {
-		return nil, false, err
+		return nil, false, mitumutil.ErrNotFound.WithMessage(err, "nft tokens by contract, %s", contract)
 	} else if len(vas) < 1 {
-		return nil, false, errors.Errorf("nfts not found")
+		return nil, false, mitumutil.ErrNotFound.Errorf("nft tokens by contract, %s", contract)
 	}
 
 	i, err := hd.buildNFTsHal(contract, vas, offset, reverse)

@@ -192,7 +192,7 @@ func (bs *BlockSession) Commit(ctx context.Context) error {
 	}
 
 	if len(bs.didIssuerModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameDIDIssuer, bs.didIssuerModels); err != nil {
+		if err := bs.writeModels(ctx, defaultColNameDIDCredentialService, bs.didIssuerModels); err != nil {
 			return err
 		}
 	}

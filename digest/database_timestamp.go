@@ -6,6 +6,7 @@ import (
 	timestampservice "github.com/ProtoconNet/mitum-timestamp/state"
 	"github.com/ProtoconNet/mitum-timestamp/types"
 	mitumbase "github.com/ProtoconNet/mitum2/base"
+	mitumutil "github.com/ProtoconNet/mitum2/util"
 	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -33,7 +34,7 @@ func Timestamp(st *currencydigest.Database, contract string) (types.Design, mitu
 		},
 		opt,
 	); err != nil {
-		return types.Design{}, nil, err
+		return types.Design{}, nil, mitumutil.ErrNotFound.WithMessage(err, "timestamp service by contract %s", contract)
 	}
 
 	if sta != nil {
@@ -71,7 +72,7 @@ func TimestampItem(st *currencydigest.Database, contract, project string, idx ui
 		},
 		opt,
 	); err != nil {
-		return types.TimeStampItem{}, nil, err
+		return types.TimeStampItem{}, nil, mitumutil.ErrNotFound.WithMessage(err, "timestamp item by contract %s, project %s, timestamp idx %s", contract, project, idx)
 	}
 
 	if sta != nil {

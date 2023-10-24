@@ -3,10 +3,10 @@ module github.com/ProtoconNet/mitum-minic
 go 1.20
 
 require (
-	github.com/ProtoconNet/mitum-credential v0.0.0-20231013163215-b47895ea4cd5
+	github.com/ProtoconNet/mitum-credential v0.0.0-20231024152020-223c77d368ca
 	github.com/ProtoconNet/mitum-currency/v3 v3.0.0-alpha.0.20231024074234-da189f7c69f4
-	github.com/ProtoconNet/mitum-nft/v2 v2.0.0-20231024043249-29520ed69f9c
-	github.com/ProtoconNet/mitum-timestamp v0.0.0-20231013163502-c3835ba9b150
+	github.com/ProtoconNet/mitum-nft/v2 v2.0.0-20231024142531-49fc9be00d78
+	github.com/ProtoconNet/mitum-timestamp v0.0.0-20231024153354-17c9099bb911
 	github.com/ProtoconNet/mitum-token v0.0.0-20231024080953-9e4652baa1a1
 	github.com/ProtoconNet/mitum2 v0.0.0-20231006031328-cc14784a72b1
 	github.com/alecthomas/kong v0.8.0
