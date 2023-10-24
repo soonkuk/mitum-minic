@@ -3,10 +3,10 @@ github.com/Masterminds/semver/v3 v3.2.1 h1:RN9w6+7QoMeJVGyfmbcgs28Br8cvmnucEXnY0
 github.com/Masterminds/semver/v3 v3.2.1/go.mod h1:qvl/7zhW3nngYb5+80sSMF+FG2BjYrf8m9wsX0PNOMQ=
 github.com/ProtoconNet/mitum-credential v0.0.0-20231013163215-b47895ea4cd5 h1:++47i1LuNIBs57wDe85ENn2rA6a51U96v/Gm2GP0PwY=
 github.com/ProtoconNet/mitum-credential v0.0.0-20231013163215-b47895ea4cd5/go.mod h1:dBtMS+d5AoIImT1kP6IJj3gnY3ulOmxRPaSkuDZ718g=
-github.com/ProtoconNet/mitum-currency/v3 v3.0.0-alpha.0.20231022144435-dd60a578acd0 h1:LF2jTrEu/HmibQdQckbl6YhpNMC023zDg0vdsrRYXeM=
-github.com/ProtoconNet/mitum-currency/v3 v3.0.0-alpha.0.20231022144435-dd60a578acd0/go.mod h1:MvLJ83fsmSa3fmkS7uHwuT3DzaFyy5dP14+rfBf6uRg=
-github.com/ProtoconNet/mitum-nft/v2 v2.0.0-20231019172158-0a35bdc82a5f h1:DyersL25LVxAdSGODNgqpViz2MQEKUTtKx2DnxkcnvM=
-github.com/ProtoconNet/mitum-nft/v2 v2.0.0-20231019172158-0a35bdc82a5f/go.mod h1:zzumZzQJ2XjXeNw65hIlGsVgbggV20GR3w7OCluXFig=
+github.com/ProtoconNet/mitum-currency/v3 v3.0.0-alpha.0.20231024041912-5af15e06bb64 h1:lLiWXKzgKaHiVQicEv93BQAqWIW5LIbQS3cAPkD5OxE=
+github.com/ProtoconNet/mitum-currency/v3 v3.0.0-alpha.0.20231024041912-5af15e06bb64/go.mod h1:MvLJ83fsmSa3fmkS7uHwuT3DzaFyy5dP14+rfBf6uRg=
+github.com/ProtoconNet/mitum-nft/v2 v2.0.0-20231024043249-29520ed69f9c h1:dFHAdcAwYi9ZF4olCnbxhC2cC+5wZKj5TOyhJYPIoqE=
+github.com/ProtoconNet/mitum-nft/v2 v2.0.0-20231024043249-29520ed69f9c/go.mod h1:lNFVbACIZqsYNSQBYgWOfacPaXUqjwoJ4H5lgShr7Ss=
 github.com/ProtoconNet/mitum-timestamp v0.0.0-20231013163502-c3835ba9b150 h1:VjI0qlixcAB9P4UspU6gNDFdsr7vLTzSxcg6IrlkxmQ=
 github.com/ProtoconNet/mitum-timestamp v0.0.0-20231013163502-c3835ba9b150/go.mod h1:C9RepcK6rNtOkb1XmX//+Be6vz8B4dQJ3Fl/mE0hwZo=
 github.com/ProtoconNet/mitum-token v0.0.0-20231023065628-94a6f0facbf1 h1:HzFdYzkcziy2DP7RCo0uETcid4EKIKj06GzWCjE0rjA=
