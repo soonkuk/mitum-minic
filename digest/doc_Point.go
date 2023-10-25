@@ -4,42 +4,42 @@ import (
 	"github.com/ProtoconNet/mitum-currency/v3/common"
 	mongodbstorage "github.com/ProtoconNet/mitum-currency/v3/digest/mongodb"
 	bsonenc "github.com/ProtoconNet/mitum-currency/v3/digest/util/bson"
-	"github.com/ProtoconNet/mitum-token/state"
-	"github.com/ProtoconNet/mitum-token/types"
+	"github.com/ProtoconNet/mitum-point/state"
+	"github.com/ProtoconNet/mitum-point/types"
 	"github.com/ProtoconNet/mitum2/base"
 	"github.com/ProtoconNet/mitum2/util/encoder"
 )
 
-type TokenDoc struct {
+type PointDoc struct {
 	mongodbstorage.BaseDoc
 	st base.State
 	de types.Design
 }
 
-func NewTokenDoc(st base.State, enc encoder.Encoder) (TokenDoc, error) {
+func NewPointDoc(st base.State, enc encoder.Encoder) (PointDoc, error) {
 	de, err := state.StateDesignValue(st)
 	if err != nil {
-		return TokenDoc{}, err
+		return PointDoc{}, err
 	}
 	b, err := mongodbstorage.NewBaseDoc(nil, st, enc)
 	if err != nil {
-		return TokenDoc{}, err
+		return PointDoc{}, err
 	}
 
-	return TokenDoc{
+	return PointDoc{
 		BaseDoc: b,
 		st:      st,
 		de:      *de,
 	}, nil
 }
 
-func (doc TokenDoc) MarshalBSON() ([]byte, error) {
+func (doc PointDoc) MarshalBSON() ([]byte, error) {
 	m, err := doc.BaseDoc.M()
 	if err != nil {
 		return nil, err
 	}
 
-	stateKeys, err := state.ParseStateKey(doc.st.Key(), state.TokenPrefix)
+	stateKeys, err := state.ParseStateKey(doc.st.Key(), state.PointPrefix)
 	if err != nil {
 		return nil, err
 	}
@@ -50,14 +50,14 @@ func (doc TokenDoc) MarshalBSON() ([]byte, error) {
 	return bsonenc.Marshal(m)
 }
 
-type TokenBalanceDoc struct {
+type PointBalanceDoc struct {
 	mongodbstorage.BaseDoc
 	st     base.State
 	amount common.Big
 }
 
-func NewTokenBalanceDoc(st base.State, enc encoder.Encoder) (*TokenBalanceDoc, error) {
-	balance, err := state.StateTokenBalanceValue(st)
+func NewPointBalanceDoc(st base.State, enc encoder.Encoder) (*PointBalanceDoc, error) {
+	balance, err := state.StatePointBalanceValue(st)
 	if err != nil {
 		return nil, err
 	}
@@ -67,20 +67,20 @@ func NewTokenBalanceDoc(st base.State, enc encoder.Encoder) (*TokenBalanceDoc, e
 		return nil, err
 	}
 
-	return &TokenBalanceDoc{
+	return &PointBalanceDoc{
 		BaseDoc: b,
 		st:      st,
 		amount:  balance,
 	}, nil
 }
 
-func (doc TokenBalanceDoc) MarshalBSON() ([]byte, error) {
+func (doc PointBalanceDoc) MarshalBSON() ([]byte, error) {
 	m, err := doc.BaseDoc.M()
 	if err != nil {
 		return nil, err
 	}
 
-	stateKeys, err := state.ParseStateKey(doc.st.Key(), state.TokenPrefix)
+	stateKeys, err := state.ParseStateKey(doc.st.Key(), state.PointPrefix)
 	if err != nil {
 		return nil, err
 	}

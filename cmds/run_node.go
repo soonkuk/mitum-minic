@@ -2,6 +2,7 @@ package cmds
 
 import (
 	"context"
+	pointcmds "github.com/ProtoconNet/mitum-point/cmds"
 	"net"
 	"net/http"
 	"os"
@@ -85,6 +86,7 @@ func (cmd *RunCommand) Run(pctx context.Context) error {
 		PreAddOK(timestampcmds.PNameOperationProcessorsMap, timestampcmds.POperationProcessorsMap).
 		PreAddOK(credentialcmds.PNameOperationProcessorsMap, credentialcmds.POperationProcessorsMap).
 		PreAddOK(tokencmds.PNameOperationProcessorsMap, tokencmds.POperationProcessorsMap).
+		PreAddOK(pointcmds.PNameOperationProcessorsMap, pointcmds.POperationProcessorsMap).
 		PreAddOK(PNameOperationProcessorsMap, POperationProcessorsMap).
 		PreAddOK(ps.Name("when-new-block-saved-in-consensus-state-func"), cmd.pWhenNewBlockSavedInConsensusStateFunc).
 		PreAddOK(ps.Name("when-new-block-confirmed-func"), cmd.pWhenNewBlockConfirmed)

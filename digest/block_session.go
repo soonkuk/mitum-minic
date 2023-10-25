@@ -45,6 +45,8 @@ type BlockSession struct {
 	timestampModels       []mongo.WriteModel
 	tokenModels           []mongo.WriteModel
 	tokenBalanceModels    []mongo.WriteModel
+	pointModels           []mongo.WriteModel
+	pointBalanceModels    []mongo.WriteModel
 	statesValue           *sync.Map
 	balanceAddressList    []string
 	nftMap                map[string]struct{}
@@ -103,6 +105,9 @@ func (bs *BlockSession) Prepare() error {
 		return err
 	}
 	if err := bs.prepareToken(); err != nil {
+		return err
+	}
+	if err := bs.preparePoint(); err != nil {
 		return err
 	}
 
@@ -242,6 +247,18 @@ func (bs *BlockSession) Commit(ctx context.Context) error {
 
 	if len(bs.tokenBalanceModels) > 0 {
 		if err := bs.writeModels(ctx, defaultColNameTokenBalance, bs.tokenBalanceModels); err != nil {
+			return err
+		}
+	}
+
+	if len(bs.pointModels) > 0 {
+		if err := bs.writeModels(ctx, defaultColNamePoint, bs.pointModels); err != nil {
+			return err
+		}
+	}
+
+	if len(bs.pointBalanceModels) > 0 {
+		if err := bs.writeModels(ctx, defaultColNamePointBalance, bs.pointBalanceModels); err != nil {
 			return err
 		}
 	}
@@ -484,6 +501,8 @@ func (bs *BlockSession) close() error {
 	bs.timestampModels = nil
 	bs.tokenModels = nil
 	bs.tokenBalanceModels = nil
+	bs.pointModels = nil
+	bs.pointBalanceModels = nil
 
 	return bs.st.Close()
 }

@@ -19,4 +19,6 @@ var (
 	defaultColNameTimeStamp            = "digest_ts"
 	defaultColNameToken                = "digest_token"
 	defaultColNameTokenBalance         = "digest_token_bl"
+	defaultColNamePoint                = "digest_point"
+	defaultColNamePointBalance         = "digest_point_bl"
 )

@@ -52,7 +52,7 @@ func (bs *BlockSession) handleTokenState(st mitumbase.State) ([]mongo.WriteModel
 }
 
 func (bs *BlockSession) handleTokenBalanceState(st mitumbase.State) ([]mongo.WriteModel, error) {
-	if tokenBalanceDoc, err := NewBalanceDoc(st, bs.st.DatabaseEncoder()); err != nil {
+	if tokenBalanceDoc, err := NewTokenBalanceDoc(st, bs.st.DatabaseEncoder()); err != nil {
 		return nil, err
 	} else {
 		return []mongo.WriteModel{

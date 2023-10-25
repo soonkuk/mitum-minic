@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	pointcmds "github.com/ProtoconNet/mitum-point/cmds"
 	timestampcmds "github.com/ProtoconNet/mitum-timestamp/cmds"
 	tokencmds "github.com/ProtoconNet/mitum-token/cmds"
 	"os"
@@ -41,6 +42,7 @@ var CLI struct { //nolint:govet //...
 		Credential credentialcmds.CredentialCommand `cmd:"" help:"credential operation"`
 		Timestamp  timestampcmds.TimestampCommand   `cmd:"" help:"timestamp operation"`
 		Token      tokencmds.TokenCommand           `cmd:"" help:"token operation"`
+		Point      pointcmds.PointCommand           `cmd:"" help:"point operation"`
 	} `cmd:"" help:"create operation"`
 	Network struct {
 		Client cmds.NetworkClientCommand `cmd:"" help:"network client"`
