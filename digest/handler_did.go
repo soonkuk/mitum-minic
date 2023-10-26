@@ -98,13 +98,13 @@ func (hd *Handlers) handleCredential(w http.ResponseWriter, r *http.Request) {
 }
 
 func (hd *Handlers) handleCredentialInGroup(contract, templateID, credentialID string) (interface{}, error) {
-	switch credential, err := Credential(hd.database, contract, templateID, credentialID); {
+	switch credential, isActive, err := Credential(hd.database, contract, templateID, credentialID); {
 	case err != nil:
 		return nil, mitumutil.ErrNotFound.WithMessage(err, "credential by contract %s, template %s, id %s", contract, templateID, credentialID)
 	case credential == nil:
 		return nil, mitumutil.ErrNotFound.Errorf("credential by contract %s, template %s, id %s", contract, templateID, credentialID)
 	default:
-		hal, err := hd.buildCredentialHal(contract, templateID, *credential)
+		hal, err := hd.buildCredentialHal(contract, templateID, *credential, isActive)
 		if err != nil {
 			return nil, err
 		}
@@ -115,6 +115,7 @@ func (hd *Handlers) handleCredentialInGroup(contract, templateID, credentialID s
 func (hd *Handlers) buildCredentialHal(
 	contract, templateID string,
 	credential types.Credential,
+	isActive bool,
 ) (currencydigest.Hal, error) {
 	h, err := hd.combineURL(
 		HandlerPathDIDCredential,
@@ -126,7 +127,13 @@ func (hd *Handlers) buildCredentialHal(
 		return nil, err
 	}
 
-	hal := currencydigest.NewBaseHal(credential, currencydigest.NewHalLink(h, nil))
+	hal := currencydigest.NewBaseHal(
+		struct {
+			Credential types.Credential `json:"credential"`
+			IsActive   bool             `json:"is_active"`
+		}{Credential: credential, IsActive: isActive},
+		currencydigest.NewHalLink(h, nil),
+	)
 
 	return hal, nil
 }
@@ -203,8 +210,8 @@ func (hd *Handlers) handleCredentialsInGroup(
 	var vas []currencydigest.Hal
 	if err := CredentialsByServiceAndTemplate(
 		hd.database, contract, templateID, reverse, offset, limit,
-		func(credential types.Credential, st base.State) (bool, error) {
-			hal, err := hd.buildCredentialHal(contract, templateID, credential)
+		func(credential types.Credential, isActive bool, st base.State) (bool, error) {
+			hal, err := hd.buildCredentialHal(contract, templateID, credential, isActive)
 			if err != nil {
 				return false, err
 			}

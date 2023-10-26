@@ -44,12 +44,14 @@ func CredentialService(st *currencydigest.Database, contract string) (*types.Des
 	return design, nil
 }
 
-func Credential(st *currencydigest.Database, contract, templateID, credentialID string) (*types.Credential, error) {
+func Credential(st *currencydigest.Database, contract, templateID, credentialID string) (*types.Credential, bool, error) {
+
 	filter := util.NewBSONFilter("contract", contract)
 	filter = filter.Add("template", templateID)
 	filter = filter.Add("credential_id", credentialID)
 
 	var credential *types.Credential
+	var isActive bool
 	var sta mitumbase.State
 	var err error
 	if err = st.DatabaseClient().GetByFilter(
@@ -60,19 +62,20 @@ func Credential(st *currencydigest.Database, contract, templateID, credentialID 
 			if err != nil {
 				return err
 			}
-			cre, err := state.StateCredentialValue(sta)
+			cre, active, err := state.StateCredentialValue(sta)
 			if err != nil {
 				return err
 			}
 			credential = &cre
+			isActive = active
 			return nil
 		},
 		options.FindOne().SetSort(util.NewBSONFilter("height", -1).D()),
 	); err != nil {
-		return nil, err
+		return nil, false, err
 	}
 
-	return credential, nil
+	return credential, isActive, nil
 }
 
 func Template(st *currencydigest.Database, contract, templateID string) (*types.Template, error) {
@@ -142,7 +145,7 @@ func CredentialsByServiceAndTemplate(
 	reverse bool,
 	offset string,
 	limit int64,
-	callback func(types.Credential, mitumbase.State) (bool, error),
+	callback func(types.Credential, bool, mitumbase.State) (bool, error),
 ) error {
 	filter, err := buildCredentialFilterByService(contract, templateID, offset, reverse)
 	if err != nil {
@@ -175,11 +178,12 @@ func CredentialsByServiceAndTemplate(
 			if err != nil {
 				return false, err
 			}
-			credential, err := state.StateCredentialValue(st)
+			credential, isActive, err := state.StateCredentialValue(st)
 			if err != nil {
 				return false, err
 			}
-			return callback(credential, st)
+			return callback(credential, isActive, st)
+
 		},
 		opt,
 	)

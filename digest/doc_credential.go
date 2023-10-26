@@ -93,10 +93,11 @@ type CredentialDoc struct {
 	mongodbstorage.BaseDoc
 	st         base.State
 	credential types.Credential
+	isActive   bool
 }
 
 func NewCredentialDoc(st base.State, enc encoder.Encoder) (*CredentialDoc, error) {
-	credential, err := state.StateCredentialValue(st)
+	credential, isActive, err := state.StateCredentialValue(st)
 	if err != nil {
 		return nil, err
 	}
@@ -109,6 +110,7 @@ func NewCredentialDoc(st base.State, enc encoder.Encoder) (*CredentialDoc, error
 		BaseDoc:    b,
 		st:         st,
 		credential: credential,
+		isActive:   isActive,
 	}, nil
 }
 
@@ -125,6 +127,7 @@ func (doc CredentialDoc) MarshalBSON() ([]byte, error) {
 	m["contract"] = parsedKey[1]
 	m["template"] = parsedKey[2]
 	m["credential_id"] = parsedKey[3]
+	m["is_active"] = doc.isActive
 	m["height"] = doc.st.Height()
 
 	return bsonenc.Marshal(m)
