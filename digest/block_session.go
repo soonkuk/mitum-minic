@@ -222,7 +222,7 @@ func (bs *BlockSession) Commit(ctx context.Context) error {
 	}
 
 	if len(bs.didHolderDIDModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameHolderDID, bs.didHolderDIDModels); err != nil {
+		if err := bs.writeModels(ctx, defaultColNameHolder, bs.didHolderDIDModels); err != nil {
 			return err
 		}
 	}

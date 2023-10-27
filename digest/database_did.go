@@ -116,7 +116,7 @@ func HolderDID(st *currencydigest.Database, contract, holder string) (string, er
 	var sta mitumbase.State
 	var err error
 	if err = st.DatabaseClient().GetByFilter(
-		defaultColNameHolderDID,
+		defaultColNameHolder,
 		filter.D(),
 		func(res *mongo.SingleResult) error {
 			sta, err = currencydigest.LoadState(res.Decode, st.DatabaseEncoders())
@@ -147,7 +147,7 @@ func CredentialsByServiceAndTemplate(
 	limit int64,
 	callback func(types.Credential, bool, mitumbase.State) (bool, error),
 ) error {
-	filter, err := buildCredentialFilterByService(contract, templateID, offset, reverse)
+	filter, err := buildCredentialFilterByServiceTemplate(contract, templateID, offset, reverse)
 	if err != nil {
 		return err
 	}
@@ -189,7 +189,7 @@ func CredentialsByServiceAndTemplate(
 	)
 }
 
-func buildCredentialFilterByService(contract, templateID string, offset string, reverse bool) (bson.D, error) {
+func buildCredentialFilterByServiceTemplate(contract, templateID string, offset string, reverse bool) (bson.D, error) {
 	filterA := bson.A{}
 
 	// filter fot matching collection
@@ -212,6 +212,60 @@ func buildCredentialFilterByService(contract, templateID string, offset string, 
 			filterA = append(filterA, filterHeight)
 		}
 	}
+
+	filter := bson.D{}
+	if len(filterA) > 0 {
+		filter = bson.D{
+			{"$and", filterA},
+		}
+	}
+
+	return filter, nil
+}
+
+func CredentialsByServiceHolder(
+	st *currencydigest.Database,
+	contract, holder string,
+	callback func(types.Credential, bool, mitumbase.State) (bool, error),
+) error {
+	filter, err := buildCredentialFilterByServiceHolder(contract, holder)
+	if err != nil {
+		return err
+	}
+
+	opt := options.Find().SetSort(
+		util.NewBSONFilter("height", 1).D(),
+	)
+
+	opt = opt.SetLimit(1000)
+
+	return st.DatabaseClient().Find(
+		context.Background(),
+		defaultColNameDIDCredential,
+		filter,
+		func(cursor *mongo.Cursor) (bool, error) {
+			st, err := currencydigest.LoadState(cursor.Decode, st.DatabaseEncoders())
+			if err != nil {
+				return false, err
+			}
+			credential, isActive, err := state.StateCredentialValue(st)
+			if err != nil {
+				return false, err
+			}
+			return callback(credential, isActive, st)
+		},
+		opt,
+	)
+}
+
+func buildCredentialFilterByServiceHolder(contract, holder string) (bson.D, error) {
+	filterA := bson.A{}
+
+	// filter fot matching collection
+	filterContract := bson.D{{"contract", bson.D{{"$in", []string{contract}}}}}
+	filterHolder := bson.D{{"d.value.credential.holder", holder}}
+	filterA = append(filterA, filterContract)
+	filterA = append(filterA, filterHolder)
 
 	filter := bson.D{}
 	if len(filterA) > 0 {

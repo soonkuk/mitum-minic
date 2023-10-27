@@ -3,7 +3,7 @@ module github.com/ProtoconNet/mitum-minic
 go 1.20
 
 require (
-	github.com/ProtoconNet/mitum-credential v0.0.0-20231026070052-b2fb993dc749
+	github.com/ProtoconNet/mitum-credential v0.0.0-20231027063453-585f970b8bfa
 	github.com/ProtoconNet/mitum-currency/v3 v3.0.0-alpha.0.20231024074234-da189f7c69f4
 	github.com/ProtoconNet/mitum-nft/v2 v2.0.0-20231027020022-7ce13c20abb0
 	github.com/ProtoconNet/mitum-point v0.0.0-20231025015307-f52ce83b5147

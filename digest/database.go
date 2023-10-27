@@ -14,7 +14,7 @@ var (
 	defaultColNameNFTOperator          = "digest_nftoperator"
 	defaultColNameDIDCredentialService = "digest_did_issuer"
 	defaultColNameDIDCredential        = "digest_did_credential"
-	defaultColNameHolderDID            = "digest_did_holder_did"
+	defaultColNameHolder               = "digest_did_holder_did"
 	defaultColNameTemplate             = "digest_did_template"
 	defaultColNameTimeStamp            = "digest_ts"
 	defaultColNameToken                = "digest_token"

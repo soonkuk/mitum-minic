@@ -4,6 +4,7 @@ import (
 	"github.com/ProtoconNet/mitum-credential/types"
 	currencydigest "github.com/ProtoconNet/mitum-currency/v3/digest"
 	mitumutil "github.com/ProtoconNet/mitum2/util"
+	"github.com/pkg/errors"
 	"net/http"
 	"time"
 
@@ -104,7 +105,7 @@ func (hd *Handlers) handleCredentialInGroup(contract, templateID, credentialID s
 	case credential == nil:
 		return nil, mitumutil.ErrNotFound.Errorf("credential by contract %s, template %s, id %s", contract, templateID, credentialID)
 	default:
-		hal, err := hd.buildCredentialHal(contract, templateID, *credential, isActive)
+		hal, err := hd.buildCredentialHal(contract, *credential, isActive)
 		if err != nil {
 			return nil, err
 		}
@@ -113,14 +114,14 @@ func (hd *Handlers) handleCredentialInGroup(contract, templateID, credentialID s
 }
 
 func (hd *Handlers) buildCredentialHal(
-	contract, templateID string,
+	contract string,
 	credential types.Credential,
 	isActive bool,
 ) (currencydigest.Hal, error) {
 	h, err := hd.combineURL(
 		HandlerPathDIDCredential,
 		"contract", contract,
-		"templateid", templateID,
+		"templateid", credential.TemplateID(),
 		"credentialid", credential.ID(),
 	)
 	if err != nil {
@@ -211,7 +212,7 @@ func (hd *Handlers) handleCredentialsInGroup(
 	if err := CredentialsByServiceAndTemplate(
 		hd.database, contract, templateID, reverse, offset, limit,
 		func(credential types.Credential, isActive bool, st base.State) (bool, error) {
-			hal, err := hd.buildCredentialHal(contract, templateID, credential, isActive)
+			hal, err := hd.buildCredentialHal(contract, credential, isActive)
 			if err != nil {
 				return false, err
 			}
@@ -269,8 +270,15 @@ func (hd *Handlers) buildCredentialsHal(
 	var nextOffset string
 
 	if len(vas) > 0 {
-		va := vas[len(vas)-1].Interface().(types.Credential)
-		nextOffset = va.ID()
+		va, ok := vas[len(vas)-1].Interface().(struct {
+			Credential types.Credential `json:"credential"`
+			IsActive   bool             `json:"is_active"`
+		})
+		if !ok {
+			return nil, errors.Errorf("failed to build credentials hal")
+		}
+		nextOffset = va.Credential.ID()
+
 	}
 
 	if len(nextOffset) > 0 {
@@ -289,7 +297,7 @@ func (hd *Handlers) buildCredentialsHal(
 	return hal, nil
 }
 
-func (hd *Handlers) handleHolderDID(w http.ResponseWriter, r *http.Request) {
+func (hd *Handlers) handleHolderCredential(w http.ResponseWriter, r *http.Request) {
 	cacheKey := currencydigest.CacheKeyPath(r)
 	if err := currencydigest.LoadFromCache(hd.cache, cacheKey, w); err == nil {
 		return
@@ -308,7 +316,7 @@ func (hd *Handlers) handleHolderDID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if v, err, shared := hd.rg.Do(cacheKey, func() (interface{}, error) {
-		return hd.handleHolderDIDInGroup(contract, holder)
+		return hd.handleHolderCredentialsInGroup(contract, holder)
 	}); err != nil {
 		currencydigest.HTTP2HandleError(w, err)
 	} else {
@@ -319,30 +327,58 @@ func (hd *Handlers) handleHolderDID(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (hd *Handlers) handleHolderDIDInGroup(contract, holder string) (interface{}, error) {
-	switch did, err := HolderDID(hd.database, contract, holder); {
+func (hd *Handlers) handleHolderCredentialsInGroup(contract, holder string) (interface{}, error) {
+	var did string
+	switch d, err := HolderDID(hd.database, contract, holder); {
 	case err != nil:
 		return nil, mitumutil.ErrNotFound.WithMessage(err, "DID by contract %s, holder %s", contract, holder)
-	case did == "":
+	case d == "":
 		return nil, mitumutil.ErrNotFound.Errorf("DID by contract %s, holder %s", contract, holder)
 	default:
-		hal, err := hd.buildHolderDIDHal(contract, holder, did)
-		if err != nil {
-			return nil, err
-		}
-		return hd.encoder.Marshal(hal)
+		did = d
 	}
+
+	var vas []currencydigest.Hal
+	if err := CredentialsByServiceHolder(
+		hd.database, contract, holder,
+		func(credential types.Credential, isActive bool, st base.State) (bool, error) {
+			hal, err := hd.buildCredentialHal(contract, credential, isActive)
+			if err != nil {
+				return false, err
+			}
+			vas = append(vas, hal)
+
+			return true, nil
+		},
+	); err != nil {
+		return nil, mitumutil.ErrNotFound.WithMessage(err, "credentials by contract %s, holder %s", contract, holder)
+	} else if len(vas) < 1 {
+		return nil, mitumutil.ErrNotFound.Errorf("credentials by contract %s, holder %s", contract, holder)
+	}
+	hal, err := hd.buildHolderDIDCredentialsHal(contract, holder, did, vas)
+	if err != nil {
+		return nil, err
+	}
+	return hd.encoder.Marshal(hal)
 }
 
-func (hd *Handlers) buildHolderDIDHal(
+func (hd *Handlers) buildHolderDIDCredentialsHal(
 	contract, holder, did string,
+	vas []currencydigest.Hal,
 ) (currencydigest.Hal, error) {
 	h, err := hd.combineURL(HandlerPathDIDHolder, "contract", contract, "holder", holder)
 	if err != nil {
 		return nil, err
 	}
 
-	hal := currencydigest.NewBaseHal(did, currencydigest.NewHalLink(h, nil))
+	hal := currencydigest.NewBaseHal(
+		struct {
+			DID         string               `json:"did"`
+			Credentials []currencydigest.Hal `json:"credentials"`
+		}{
+			DID:         did,
+			Credentials: vas,
+		}, currencydigest.NewHalLink(h, nil))
 
 	return hal, nil
 }

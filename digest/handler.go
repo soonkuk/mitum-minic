@@ -137,7 +137,7 @@ func (hd *Handlers) setHandlers() {
 		Methods(http.MethodOptions, "GET")
 	_ = hd.setHandler(HandlerPathDIDCredential, hd.handleCredential, true).
 		Methods(http.MethodOptions, "GET")
-	_ = hd.setHandler(HandlerPathDIDHolder, hd.handleHolderDID, true).
+	_ = hd.setHandler(HandlerPathDIDHolder, hd.handleHolderCredential, true).
 		Methods(http.MethodOptions, "GET")
 	_ = hd.setHandler(HandlerPathDIDTemplate, hd.handleTemplate, true).
 		Methods(http.MethodOptions, "GET")
