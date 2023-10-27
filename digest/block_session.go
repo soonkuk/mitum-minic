@@ -70,13 +70,14 @@ func NewBlockSession(
 	}
 
 	return &BlockSession{
-		st:          nst,
-		block:       blk,
-		ops:         ops,
-		opstree:     opstree,
-		sts:         sts,
-		statesValue: &sync.Map{},
-		nftMap:      map[string]struct{}{},
+		st:            nst,
+		block:         blk,
+		ops:           ops,
+		opstree:       opstree,
+		sts:           sts,
+		statesValue:   &sync.Map{},
+		nftMap:        map[string]struct{}{},
+		credentialMap: map[string]struct{}{},
 	}, nil
 }
 
@@ -503,6 +504,8 @@ func (bs *BlockSession) close() error {
 	bs.tokenBalanceModels = nil
 	bs.pointModels = nil
 	bs.pointBalanceModels = nil
+	bs.nftMap = nil
+	bs.credentialMap = nil
 
 	return bs.st.Close()
 }

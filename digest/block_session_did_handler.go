@@ -2,6 +2,7 @@ package digest
 
 import (
 	"github.com/ProtoconNet/mitum-credential/state"
+	"github.com/ProtoconNet/mitum-credential/types"
 	mitumbase "github.com/ProtoconNet/mitum2/base"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -20,16 +21,17 @@ func (bs *BlockSession) prepareDID() error {
 		st := bs.sts[i]
 		switch {
 		case state.IsStateDesignKey(st.Key()):
-			j, err := bs.handleDIDIssuerState(st)
+			j, err := bs.handleDIDServiceState(st)
 			if err != nil {
 				return err
 			}
 			didModels = append(didModels, j...)
 		case state.IsStateCredentialKey(st.Key()):
-			j, err := bs.handleCredentialState(st)
+			j, cre, err := bs.handleCredentialState(st)
 			if err != nil {
 				return err
 			}
+			bs.credentialMap[cre.ID()] = struct{}{}
 			didCredentialModels = append(didCredentialModels, j...)
 		case state.IsStateHolderDIDKey(st.Key()):
 			j, err := bs.handleHolderDIDState(st)
@@ -56,8 +58,8 @@ func (bs *BlockSession) prepareDID() error {
 	return nil
 }
 
-func (bs *BlockSession) handleDIDIssuerState(st mitumbase.State) ([]mongo.WriteModel, error) {
-	if issuerDoc, err := NewIssuerDoc(st, bs.st.DatabaseEncoder()); err != nil {
+func (bs *BlockSession) handleDIDServiceState(st mitumbase.State) ([]mongo.WriteModel, error) {
+	if issuerDoc, err := NewServiceDoc(st, bs.st.DatabaseEncoder()); err != nil {
 		return nil, err
 	} else {
 		return []mongo.WriteModel{
@@ -66,13 +68,13 @@ func (bs *BlockSession) handleDIDIssuerState(st mitumbase.State) ([]mongo.WriteM
 	}
 }
 
-func (bs *BlockSession) handleCredentialState(st mitumbase.State) ([]mongo.WriteModel, error) {
+func (bs *BlockSession) handleCredentialState(st mitumbase.State) ([]mongo.WriteModel, *types.Credential, error) {
 	if credentialDoc, err := NewCredentialDoc(st, bs.st.DatabaseEncoder()); err != nil {
-		return nil, err
+		return nil, nil, err
 	} else {
 		return []mongo.WriteModel{
 			mongo.NewInsertOneModel().SetDocument(credentialDoc),
-		}, nil
+		}, &credentialDoc.credential, nil
 	}
 }
 

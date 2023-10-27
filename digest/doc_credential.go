@@ -9,30 +9,30 @@ import (
 	"github.com/ProtoconNet/mitum2/util/encoder"
 )
 
-type IssuerDoc struct {
+type ServicerDoc struct {
 	mongodbstorage.BaseDoc
 	st base.State
 	de types.Design
 }
 
-func NewIssuerDoc(st base.State, enc encoder.Encoder) (IssuerDoc, error) {
+func NewServiceDoc(st base.State, enc encoder.Encoder) (ServicerDoc, error) {
 	de, err := state.StateDesignValue(st)
 	if err != nil {
-		return IssuerDoc{}, err
+		return ServicerDoc{}, err
 	}
 	b, err := mongodbstorage.NewBaseDoc(nil, st, enc)
 	if err != nil {
-		return IssuerDoc{}, err
+		return ServicerDoc{}, err
 	}
 
-	return IssuerDoc{
+	return ServicerDoc{
 		BaseDoc: b,
 		st:      st,
 		de:      de,
 	}, nil
 }
 
-func (doc IssuerDoc) MarshalBSON() ([]byte, error) {
+func (doc ServicerDoc) MarshalBSON() ([]byte, error) {
 	m, err := doc.BaseDoc.M()
 	if err != nil {
 		return nil, err
