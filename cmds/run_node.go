@@ -366,7 +366,7 @@ func (cmd *RunCommand) pDigestAPIHandlers(ctx context.Context) (context.Context,
 	}
 	router := dnt.Router()
 
-	defaultHandlers, err := cmd.setDigestDefaultHandlers(ctx, params, cache, router)
+	defaultHandlers, err := cmd.setDigestDefaultHandlers(ctx, params, cache, router, dnt.Queue())
 	if err != nil {
 		return ctx, err
 	}
@@ -403,13 +403,14 @@ func (cmd *RunCommand) setDigestDefaultHandlers(
 	params *launch.LocalParams,
 	cache currencydigest.Cache,
 	router *mux.Router,
+	queue chan currencydigest.RequestWrapper,
 ) (*currencydigest.Handlers, error) {
 	var st *currencydigest.Database
 	if err := util.LoadFromContext(ctx, currencycmds.ContextValueDigestDatabase, &st); err != nil {
 		return nil, err
 	}
 
-	handlers := currencydigest.NewHandlers(ctx, params.ISAAC.NetworkID(), encs, enc, st, cache, router)
+	handlers := currencydigest.NewHandlers(ctx, params.ISAAC.NetworkID(), encs, enc, st, cache, router, queue)
 
 	h, err := cmd.setDigestNetworkClient(ctx, params, handlers)
 	if err != nil {
