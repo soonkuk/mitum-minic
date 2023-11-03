@@ -384,6 +384,8 @@ func (cmd *RunCommand) pDigestAPIHandlers(ctx context.Context) (context.Context,
 		return ctx, err
 	}
 
+	dnt.SetEncoder(enc)
+
 	return ctx, nil
 }
 

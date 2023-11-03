@@ -2,7 +2,6 @@ package digest
 
 import (
 	"github.com/ProtoconNet/mitum-credential/state"
-	"github.com/ProtoconNet/mitum-credential/types"
 	mitumbase "github.com/ProtoconNet/mitum2/base"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -27,11 +26,11 @@ func (bs *BlockSession) prepareDID() error {
 			}
 			didModels = append(didModels, j...)
 		case state.IsStateCredentialKey(st.Key()):
-			j, cre, err := bs.handleCredentialState(st)
+			j, err := bs.handleCredentialState(st)
 			if err != nil {
 				return err
 			}
-			bs.credentialMap[cre.ID()] = struct{}{}
+			bs.credentialMap[st.Key()] = struct{}{}
 			didCredentialModels = append(didCredentialModels, j...)
 		case state.IsStateHolderDIDKey(st.Key()):
 			j, err := bs.handleHolderDIDState(st)
@@ -68,13 +67,13 @@ func (bs *BlockSession) handleDIDServiceState(st mitumbase.State) ([]mongo.Write
 	}
 }
 
-func (bs *BlockSession) handleCredentialState(st mitumbase.State) ([]mongo.WriteModel, *types.Credential, error) {
+func (bs *BlockSession) handleCredentialState(st mitumbase.State) ([]mongo.WriteModel, error) {
 	if credentialDoc, err := NewCredentialDoc(st, bs.st.DatabaseEncoder()); err != nil {
-		return nil, nil, err
+		return nil, err
 	} else {
 		return []mongo.WriteModel{
 			mongo.NewInsertOneModel().SetDocument(credentialDoc),
-		}, &credentialDoc.credential, nil
+		}, nil
 	}
 }
 
