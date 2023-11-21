@@ -23,36 +23,41 @@ var bulkWriteLimit = 500
 
 type BlockSession struct {
 	sync.RWMutex
-	block                 mitumbase.BlockMap
-	ops                   []mitumbase.Operation
-	opstree               fixedtree.Tree
-	sts                   []mitumbase.State
-	st                    *currencydigest.Database
-	proposal              mitumbase.ProposalSignFact
-	opsTreeNodes          map[string]mitumbase.OperationFixedtreeNode
-	blockModels           []mongo.WriteModel
-	operationModels       []mongo.WriteModel
-	accountModels         []mongo.WriteModel
-	balanceModels         []mongo.WriteModel
-	currencyModels        []mongo.WriteModel
-	contractAccountModels []mongo.WriteModel
-	nftCollectionModels   []mongo.WriteModel
-	nftModels             []mongo.WriteModel
-	nftBoxModels          []mongo.WriteModel
-	nftOperatorModels     []mongo.WriteModel
-	didIssuerModels       []mongo.WriteModel
-	didCredentialModels   []mongo.WriteModel
-	didHolderDIDModels    []mongo.WriteModel
-	didTemplateModels     []mongo.WriteModel
-	timestampModels       []mongo.WriteModel
-	tokenModels           []mongo.WriteModel
-	tokenBalanceModels    []mongo.WriteModel
-	pointModels           []mongo.WriteModel
-	pointBalanceModels    []mongo.WriteModel
-	statesValue           *sync.Map
-	balanceAddressList    []string
-	nftMap                map[string]struct{}
-	credentialMap         map[string]struct{}
+	block                   mitumbase.BlockMap
+	ops                     []mitumbase.Operation
+	opstree                 fixedtree.Tree
+	sts                     []mitumbase.State
+	st                      *currencydigest.Database
+	proposal                mitumbase.ProposalSignFact
+	opsTreeNodes            map[string]mitumbase.OperationFixedtreeNode
+	blockModels             []mongo.WriteModel
+	operationModels         []mongo.WriteModel
+	accountModels           []mongo.WriteModel
+	balanceModels           []mongo.WriteModel
+	currencyModels          []mongo.WriteModel
+	contractAccountModels   []mongo.WriteModel
+	nftCollectionModels     []mongo.WriteModel
+	nftModels               []mongo.WriteModel
+	nftBoxModels            []mongo.WriteModel
+	nftOperatorModels       []mongo.WriteModel
+	didIssuerModels         []mongo.WriteModel
+	didCredentialModels     []mongo.WriteModel
+	didHolderDIDModels      []mongo.WriteModel
+	didTemplateModels       []mongo.WriteModel
+	timestampModels         []mongo.WriteModel
+	tokenModels             []mongo.WriteModel
+	tokenBalanceModels      []mongo.WriteModel
+	pointModels             []mongo.WriteModel
+	pointBalanceModels      []mongo.WriteModel
+	daoDesignModels         []mongo.WriteModel
+	daoProposalModels       []mongo.WriteModel
+	daoDelegatorsModels     []mongo.WriteModel
+	daoVotersModels         []mongo.WriteModel
+	daoVotingPowerBoxModels []mongo.WriteModel
+	statesValue             *sync.Map
+	balanceAddressList      []string
+	nftMap                  map[string]struct{}
+	credentialMap           map[string]struct{}
 }
 
 func NewBlockSession(
@@ -113,6 +118,9 @@ func (bs *BlockSession) Prepare() error {
 		return err
 	}
 	if err := bs.preparePoint(); err != nil {
+		return err
+	}
+	if err := bs.prepareDAO(); err != nil {
 		return err
 	}
 
@@ -269,6 +277,36 @@ func (bs *BlockSession) Commit(ctx context.Context) error {
 
 	if len(bs.pointBalanceModels) > 0 {
 		if err := bs.writeModels(ctx, defaultColNamePointBalance, bs.pointBalanceModels); err != nil {
+			return err
+		}
+	}
+
+	if len(bs.daoDesignModels) > 0 {
+		if err := bs.writeModels(ctx, defaultColNameDAO, bs.daoDesignModels); err != nil {
+			return err
+		}
+	}
+
+	if len(bs.daoProposalModels) > 0 {
+		if err := bs.writeModels(ctx, defaultColNameProposal, bs.daoProposalModels); err != nil {
+			return err
+		}
+	}
+
+	if len(bs.daoDelegatorsModels) > 0 {
+		if err := bs.writeModels(ctx, defaultColNameDelegators, bs.daoDelegatorsModels); err != nil {
+			return err
+		}
+	}
+
+	if len(bs.daoVotersModels) > 0 {
+		if err := bs.writeModels(ctx, defaultColNameVoters, bs.daoVotersModels); err != nil {
+			return err
+		}
+	}
+
+	if len(bs.daoVotingPowerBoxModels) > 0 {
+		if err := bs.writeModels(ctx, defaultColNameVotingPowerBox, bs.daoVotingPowerBoxModels); err != nil {
 			return err
 		}
 	}

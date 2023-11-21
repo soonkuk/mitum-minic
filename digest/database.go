@@ -21,4 +21,9 @@ var (
 	defaultColNameTokenBalance         = "digest_token_bl"
 	defaultColNamePoint                = "digest_point"
 	defaultColNamePointBalance         = "digest_point_bl"
+	defaultColNameDAO                  = "digest_dao_design"
+	defaultColNameProposal             = "digest_dao_proposal"
+	defaultColNameDelegators           = "digest_dao_delegators"
+	defaultColNameVoters               = "digest_dao_voters"
+	defaultColNameVotingPowerBox       = "digest_dao_voting_power_box"
 )

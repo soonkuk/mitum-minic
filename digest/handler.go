@@ -34,6 +34,11 @@ var (
 	HandlerPathTokenBalance     = `/token/{contract:.*}/account/{address:(?i)` + base.REStringAddressString + `}` // revive:disable-line:line-length-limit
 	HandlerPathPoint            = `/point/{contract:.*}`
 	HandlerPathPointBalance     = `/point/{contract:.*}/account/{address:(?i)` + base.REStringAddressString + `}` // revive:disable-line:line-length-limit
+	HandlerPathDAOService       = `/dao/{contract:\w+}/service`
+	HandlerPathProposal         = `/dao/{contract:\w+}/proposal/{proposal_id:\w+}`
+	HandlerPathDelegator        = `/dao/{contract:\w+}/proposal/{proposal_id:\w+}/delegator/{address:(?i)` + base.REStringAddressString + `}`
+	HandlerPathVoters           = `/dao/{contract:\w+}/proposal/{proposal_id:\w+}/voter`
+	HandlerPathVotingPowerBox   = `/dao/{contract:\w+}/proposal/{proposal_id:\w+}/votingpower` // revive:disable-line:line-length-limit
 )
 
 func init() {
@@ -152,6 +157,16 @@ func (hd *Handlers) setHandlers() {
 	_ = hd.setHandler(HandlerPathPointBalance, hd.handlePointBalance, true).
 		Methods(http.MethodOptions, "GET")
 	_ = hd.setHandler(HandlerPathPoint, hd.handlePoint, true).
+		Methods(http.MethodOptions, "GET")
+	_ = hd.setHandler(HandlerPathDAOService, hd.handleDAOService, true).
+		Methods(http.MethodOptions, "GET")
+	_ = hd.setHandler(HandlerPathProposal, hd.handleProposal, true).
+		Methods(http.MethodOptions, "GET")
+	_ = hd.setHandler(HandlerPathDelegator, hd.handleDelegator, true).
+		Methods(http.MethodOptions, "GET")
+	_ = hd.setHandler(HandlerPathVoters, hd.handleVoters, true).
+		Methods(http.MethodOptions, "GET")
+	_ = hd.setHandler(HandlerPathVotingPowerBox, hd.handleVotingPowerBox, true).
 		Methods(http.MethodOptions, "GET")
 }
 
