@@ -5,9 +5,10 @@ go 1.20
 require (
 	github.com/ProtoconNet/mitum-credential v0.0.0-20231123114220-1598429b3271
 	github.com/ProtoconNet/mitum-currency/v3 v3.0.0-alpha.0.20231123111312-0802eaba5e9b
-	github.com/ProtoconNet/mitum-dao v0.0.0-20231123112853-9635dd753e5c
+	github.com/ProtoconNet/mitum-dao v0.0.0-20231127055334-09a4c7fa5d6e
 	github.com/ProtoconNet/mitum-nft/v2 v2.0.0-20231123113417-94ff2884a6bb
 	github.com/ProtoconNet/mitum-point v0.0.0-20231123113053-3d23653fa1c4
+	github.com/ProtoconNet/mitum-sto v0.0.0-20231127031819-59612aeff31b
 	github.com/ProtoconNet/mitum-timestamp v0.0.0-20231123113534-c4086ee27ab2
 	github.com/ProtoconNet/mitum-token v0.0.0-20231123114105-dd030f3a87ed
 	github.com/ProtoconNet/mitum2 v0.0.0-20231103055947-6ed9d9b53c04

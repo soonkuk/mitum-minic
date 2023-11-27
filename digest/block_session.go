@@ -23,41 +23,48 @@ var bulkWriteLimit = 500
 
 type BlockSession struct {
 	sync.RWMutex
-	block                   mitumbase.BlockMap
-	ops                     []mitumbase.Operation
-	opstree                 fixedtree.Tree
-	sts                     []mitumbase.State
-	st                      *currencydigest.Database
-	proposal                mitumbase.ProposalSignFact
-	opsTreeNodes            map[string]mitumbase.OperationFixedtreeNode
-	blockModels             []mongo.WriteModel
-	operationModels         []mongo.WriteModel
-	accountModels           []mongo.WriteModel
-	balanceModels           []mongo.WriteModel
-	currencyModels          []mongo.WriteModel
-	contractAccountModels   []mongo.WriteModel
-	nftCollectionModels     []mongo.WriteModel
-	nftModels               []mongo.WriteModel
-	nftBoxModels            []mongo.WriteModel
-	nftOperatorModels       []mongo.WriteModel
-	didIssuerModels         []mongo.WriteModel
-	didCredentialModels     []mongo.WriteModel
-	didHolderDIDModels      []mongo.WriteModel
-	didTemplateModels       []mongo.WriteModel
-	timestampModels         []mongo.WriteModel
-	tokenModels             []mongo.WriteModel
-	tokenBalanceModels      []mongo.WriteModel
-	pointModels             []mongo.WriteModel
-	pointBalanceModels      []mongo.WriteModel
-	daoDesignModels         []mongo.WriteModel
-	daoProposalModels       []mongo.WriteModel
-	daoDelegatorsModels     []mongo.WriteModel
-	daoVotersModels         []mongo.WriteModel
-	daoVotingPowerBoxModels []mongo.WriteModel
-	statesValue             *sync.Map
-	balanceAddressList      []string
-	nftMap                  map[string]struct{}
-	credentialMap           map[string]struct{}
+	block                             mitumbase.BlockMap
+	ops                               []mitumbase.Operation
+	opstree                           fixedtree.Tree
+	sts                               []mitumbase.State
+	st                                *currencydigest.Database
+	proposal                          mitumbase.ProposalSignFact
+	opsTreeNodes                      map[string]mitumbase.OperationFixedtreeNode
+	blockModels                       []mongo.WriteModel
+	operationModels                   []mongo.WriteModel
+	accountModels                     []mongo.WriteModel
+	balanceModels                     []mongo.WriteModel
+	currencyModels                    []mongo.WriteModel
+	contractAccountModels             []mongo.WriteModel
+	nftCollectionModels               []mongo.WriteModel
+	nftModels                         []mongo.WriteModel
+	nftBoxModels                      []mongo.WriteModel
+	nftOperatorModels                 []mongo.WriteModel
+	didIssuerModels                   []mongo.WriteModel
+	didCredentialModels               []mongo.WriteModel
+	didHolderDIDModels                []mongo.WriteModel
+	didTemplateModels                 []mongo.WriteModel
+	timestampModels                   []mongo.WriteModel
+	tokenModels                       []mongo.WriteModel
+	tokenBalanceModels                []mongo.WriteModel
+	pointModels                       []mongo.WriteModel
+	pointBalanceModels                []mongo.WriteModel
+	daoDesignModels                   []mongo.WriteModel
+	daoProposalModels                 []mongo.WriteModel
+	daoDelegatorsModels               []mongo.WriteModel
+	daoVotersModels                   []mongo.WriteModel
+	daoVotingPowerBoxModels           []mongo.WriteModel
+	stoDesignModels                   []mongo.WriteModel
+	stoHolderPartitionsModels         []mongo.WriteModel
+	stoHolderPartitionBalanceModels   []mongo.WriteModel
+	stoHolderPartitionOperatorsModels []mongo.WriteModel
+	stoPartitionBalanceModels         []mongo.WriteModel
+	stoPartitionControllersModels     []mongo.WriteModel
+	stoOperatorHoldersModels          []mongo.WriteModel
+	statesValue                       *sync.Map
+	balanceAddressList                []string
+	nftMap                            map[string]struct{}
+	credentialMap                     map[string]struct{}
 }
 
 func NewBlockSession(
@@ -121,6 +128,9 @@ func (bs *BlockSession) Prepare() error {
 		return err
 	}
 	if err := bs.prepareDAO(); err != nil {
+		return err
+	}
+	if err := bs.prepareSTO(); err != nil {
 		return err
 	}
 
@@ -288,25 +298,67 @@ func (bs *BlockSession) Commit(ctx context.Context) error {
 	}
 
 	if len(bs.daoProposalModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameProposal, bs.daoProposalModels); err != nil {
+		if err := bs.writeModels(ctx, defaultColNameDAOProposal, bs.daoProposalModels); err != nil {
 			return err
 		}
 	}
 
 	if len(bs.daoDelegatorsModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameDelegators, bs.daoDelegatorsModels); err != nil {
+		if err := bs.writeModels(ctx, defaultColNameDAODelegators, bs.daoDelegatorsModels); err != nil {
 			return err
 		}
 	}
 
 	if len(bs.daoVotersModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameVoters, bs.daoVotersModels); err != nil {
+		if err := bs.writeModels(ctx, defaultColNameDAOVoters, bs.daoVotersModels); err != nil {
 			return err
 		}
 	}
 
 	if len(bs.daoVotingPowerBoxModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameVotingPowerBox, bs.daoVotingPowerBoxModels); err != nil {
+		if err := bs.writeModels(ctx, defaultColNameDAOVotingPowerBox, bs.daoVotingPowerBoxModels); err != nil {
+			return err
+		}
+	}
+
+	if len(bs.stoDesignModels) > 0 {
+		if err := bs.writeModels(ctx, defaultColNameSTO, bs.stoDesignModels); err != nil {
+			return err
+		}
+	}
+
+	if len(bs.stoHolderPartitionsModels) > 0 {
+		if err := bs.writeModels(ctx, defaultColNameSTOHolderPartitions, bs.stoHolderPartitionsModels); err != nil {
+			return err
+		}
+	}
+
+	if len(bs.stoHolderPartitionBalanceModels) > 0 {
+		if err := bs.writeModels(ctx, defaultColNameSTOHolderPartitionBalance, bs.stoHolderPartitionBalanceModels); err != nil {
+			return err
+		}
+	}
+
+	if len(bs.stoHolderPartitionOperatorsModels) > 0 {
+		if err := bs.writeModels(ctx, defaultColNameSTOHolderPartitionOperators, bs.stoHolderPartitionOperatorsModels); err != nil {
+			return err
+		}
+	}
+
+	if len(bs.stoPartitionBalanceModels) > 0 {
+		if err := bs.writeModels(ctx, defaultColNameSTOPartitionBalance, bs.stoPartitionBalanceModels); err != nil {
+			return err
+		}
+	}
+
+	if len(bs.stoPartitionControllersModels) > 0 {
+		if err := bs.writeModels(ctx, defaultColNameSTOPartitionControllers, bs.stoPartitionControllersModels); err != nil {
+			return err
+		}
+	}
+
+	if len(bs.stoOperatorHoldersModels) > 0 {
+		if err := bs.writeModels(ctx, defaultColNameSTOOperatorHolders, bs.stoOperatorHoldersModels); err != nil {
 			return err
 		}
 	}
