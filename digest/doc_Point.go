@@ -39,7 +39,7 @@ func (doc PointDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	stateKeys, err := state.ParseStateKey(doc.st.Key(), state.PointPrefix)
+	stateKeys, err := state.ParseStateKey(doc.st.Key(), state.PointPrefix, 3)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func (doc PointBalanceDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	stateKeys, err := state.ParseStateKey(doc.st.Key(), state.PointPrefix)
+	stateKeys, err := state.ParseStateKey(doc.st.Key(), state.PointPrefix, 4)
 	if err != nil {
 		return nil, err
 	}

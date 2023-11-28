@@ -1,9 +1,9 @@
 package digest
 
 import (
-	mongodbstorage "github.com/ProtoconNet/mitum-currency/v3/digest/mongodb"
-	bsonenc "github.com/ProtoconNet/mitum-currency/v3/digest/util/bson"
-	timestampservice "github.com/ProtoconNet/mitum-timestamp/state"
+	mongodb "github.com/ProtoconNet/mitum-currency/v3/digest/mongodb"
+	bson "github.com/ProtoconNet/mitum-currency/v3/digest/util/bson"
+	"github.com/ProtoconNet/mitum-timestamp/state"
 	"github.com/ProtoconNet/mitum-timestamp/types"
 	"github.com/ProtoconNet/mitum2/base"
 	"github.com/ProtoconNet/mitum2/util/encoder"
@@ -11,20 +11,20 @@ import (
 )
 
 type TimeStampServiceDesignDoc struct {
-	mongodbstorage.BaseDoc
+	mongodb.BaseDoc
 	st  base.State
 	tsd types.Design
 }
 
 // NewTimeStampServiceDesignDoc gets the State of TimeStampServiceDesign
 func NewTimeStampServiceDesignDoc(st base.State, enc encoder.Encoder) (TimeStampServiceDesignDoc, error) {
-	tsd, err := timestampservice.StateServiceDesignValue(st)
+	tsd, err := state.StateServiceDesignValue(st)
 
 	if err != nil {
 		return TimeStampServiceDesignDoc{}, errors.Wrap(err, "TimeStampServiceDesignDoc needs ServiceDesign state")
 	}
 
-	b, err := mongodbstorage.NewBaseDoc(nil, st, enc)
+	b, err := mongodb.NewBaseDoc(nil, st, enc)
 	if err != nil {
 		return TimeStampServiceDesignDoc{}, err
 	}
@@ -42,28 +42,28 @@ func (doc TimeStampServiceDesignDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	parsedKey, err := timestampservice.ParseStateKey(doc.st.Key())
+	parsedKey, err := state.ParseStateKey(doc.st.Key(), state.StateKeyTimeStampPrefix, 3)
 
 	m["contract"] = parsedKey[1]
 	m["height"] = doc.st.Height()
 	m["isItem"] = false
 
-	return bsonenc.Marshal(m)
+	return bson.Marshal(m)
 }
 
 type TimeStampItemDoc struct {
-	mongodbstorage.BaseDoc
+	mongodb.BaseDoc
 	st     base.State
 	tsItem types.TimeStampItem
 }
 
 func NewTimeStampItemDoc(st base.State, enc encoder.Encoder) (TimeStampItemDoc, error) {
-	tsItem, err := timestampservice.StateTimeStampItemValue(st)
+	tsItem, err := state.StateTimeStampItemValue(st)
 	if err != nil {
 		return TimeStampItemDoc{}, errors.Wrap(err, "TimeStampServiceDesignDoc needs ServiceDesign state")
 	}
 
-	b, err := mongodbstorage.NewBaseDoc(nil, st, enc)
+	b, err := mongodb.NewBaseDoc(nil, st, enc)
 	if err != nil {
 		return TimeStampItemDoc{}, err
 	}
@@ -81,7 +81,7 @@ func (doc TimeStampItemDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	parsedKey, err := timestampservice.ParseStateKey(doc.st.Key())
+	parsedKey, err := state.ParseStateKey(doc.st.Key(), state.StateKeyTimeStampPrefix, 5)
 	if err != nil {
 		return nil, err
 	}
@@ -92,5 +92,5 @@ func (doc TimeStampItemDoc) MarshalBSON() ([]byte, error) {
 	m["height"] = doc.st.Height()
 	m["isItem"] = true
 
-	return bsonenc.Marshal(m)
+	return bson.Marshal(m)
 }

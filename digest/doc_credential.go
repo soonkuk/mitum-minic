@@ -9,36 +9,36 @@ import (
 	"github.com/ProtoconNet/mitum2/util/encoder"
 )
 
-type ServicerDoc struct {
+type ServiceDoc struct {
 	mongodbstorage.BaseDoc
 	st base.State
 	de types.Design
 }
 
-func NewServiceDoc(st base.State, enc encoder.Encoder) (ServicerDoc, error) {
+func NewServiceDoc(st base.State, enc encoder.Encoder) (ServiceDoc, error) {
 	de, err := state.StateDesignValue(st)
 	if err != nil {
-		return ServicerDoc{}, err
+		return ServiceDoc{}, err
 	}
 	b, err := mongodbstorage.NewBaseDoc(nil, st, enc)
 	if err != nil {
-		return ServicerDoc{}, err
+		return ServiceDoc{}, err
 	}
 
-	return ServicerDoc{
+	return ServiceDoc{
 		BaseDoc: b,
 		st:      st,
 		de:      de,
 	}, nil
 }
 
-func (doc ServicerDoc) MarshalBSON() ([]byte, error) {
+func (doc ServiceDoc) MarshalBSON() ([]byte, error) {
 	m, err := doc.BaseDoc.M()
 	if err != nil {
 		return nil, err
 	}
 
-	parsedKey, err := state.ParseStateKey(doc.st.Key(), state.CredentialPrefix)
+	parsedKey, err := state.ParseStateKey(doc.st.Key(), state.CredentialPrefix, 3)
 	m["contract"] = parsedKey[1]
 	m["height"] = doc.st.Height()
 	m["design"] = doc.de
@@ -46,44 +46,42 @@ func (doc ServicerDoc) MarshalBSON() ([]byte, error) {
 	return bsonenc.Marshal(m)
 }
 
-type HolderDIDDoc struct {
+type TemplateDoc struct {
 	mongodbstorage.BaseDoc
-	st  base.State
-	did string
+	st       base.State
+	template types.Template
 }
 
-func NewHolderDIDDoc(st base.State, enc encoder.Encoder) (*HolderDIDDoc, error) {
-	did, err := state.StateHolderDIDValue(st)
+func NewTemplateDoc(st base.State, enc encoder.Encoder) (*TemplateDoc, error) {
+	template, err := state.StateTemplateValue(st)
 	if err != nil {
 		return nil, err
 	}
-
 	b, err := mongodbstorage.NewBaseDoc(nil, st, enc)
 	if err != nil {
 		return nil, err
 	}
 
-	return &HolderDIDDoc{
-		BaseDoc: b,
-		st:      st,
-		did:     did,
+	return &TemplateDoc{
+		BaseDoc:  b,
+		st:       st,
+		template: template,
 	}, nil
 }
 
-func (doc HolderDIDDoc) MarshalBSON() ([]byte, error) {
+func (doc TemplateDoc) MarshalBSON() ([]byte, error) {
 	m, err := doc.BaseDoc.M()
 	if err != nil {
 		return nil, err
 	}
 
-	parsedKey, err := state.ParseStateKey(doc.st.Key(), state.CredentialPrefix)
+	parsedKey, err := state.ParseStateKey(doc.st.Key(), state.CredentialPrefix, 4)
 	if err != nil {
 		return nil, err
 	}
 
 	m["contract"] = parsedKey[1]
-	m["holder"] = parsedKey[2]
-	m["did"] = doc.did
+	m["template"] = parsedKey[2]
 	m["height"] = doc.st.Height()
 
 	return bsonenc.Marshal(m)
@@ -119,7 +117,7 @@ func (doc CredentialDoc) MarshalBSON() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	parsedKey, err := state.ParseStateKey(doc.st.Key(), state.CredentialPrefix)
+	parsedKey, err := state.ParseStateKey(doc.st.Key(), state.CredentialPrefix, 5)
 	if err != nil {
 		return nil, err
 	}
@@ -133,42 +131,44 @@ func (doc CredentialDoc) MarshalBSON() ([]byte, error) {
 	return bsonenc.Marshal(m)
 }
 
-type TemplateDoc struct {
+type HolderDIDDoc struct {
 	mongodbstorage.BaseDoc
-	st       base.State
-	template types.Template
+	st  base.State
+	did string
 }
 
-func NewTemplateDoc(st base.State, enc encoder.Encoder) (*TemplateDoc, error) {
-	template, err := state.StateTemplateValue(st)
+func NewHolderDIDDoc(st base.State, enc encoder.Encoder) (*HolderDIDDoc, error) {
+	did, err := state.StateHolderDIDValue(st)
 	if err != nil {
 		return nil, err
 	}
+
 	b, err := mongodbstorage.NewBaseDoc(nil, st, enc)
 	if err != nil {
 		return nil, err
 	}
 
-	return &TemplateDoc{
-		BaseDoc:  b,
-		st:       st,
-		template: template,
+	return &HolderDIDDoc{
+		BaseDoc: b,
+		st:      st,
+		did:     did,
 	}, nil
 }
 
-func (doc TemplateDoc) MarshalBSON() ([]byte, error) {
+func (doc HolderDIDDoc) MarshalBSON() ([]byte, error) {
 	m, err := doc.BaseDoc.M()
 	if err != nil {
 		return nil, err
 	}
 
-	parsedKey, err := state.ParseStateKey(doc.st.Key(), state.CredentialPrefix)
+	parsedKey, err := state.ParseStateKey(doc.st.Key(), state.CredentialPrefix, 4)
 	if err != nil {
 		return nil, err
 	}
 
 	m["contract"] = parsedKey[1]
-	m["template"] = parsedKey[2]
+	m["holder"] = parsedKey[2]
+	m["did"] = doc.did
 	m["height"] = doc.st.Height()
 
 	return bsonenc.Marshal(m)

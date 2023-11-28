@@ -39,7 +39,7 @@ func (doc TokenDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	stateKeys, err := state.ParseStateKey(doc.st.Key(), state.TokenPrefix)
+	stateKeys, err := state.ParseStateKey(doc.st.Key(), state.TokenPrefix, 3)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func (doc TokenBalanceDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	stateKeys, err := state.ParseStateKey(doc.st.Key(), state.TokenPrefix)
+	stateKeys, err := state.ParseStateKey(doc.st.Key(), state.TokenPrefix, 4)
 	if err != nil {
 		return nil, err
 	}
