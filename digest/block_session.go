@@ -227,7 +227,7 @@ func (bs *BlockSession) Commit(ctx context.Context) error {
 
 	if len(bs.didCredentialModels) > 0 {
 		for key := range bs.credentialMap {
-			parsedKey, err := state.ParseStateKey(key, state.CredentialPrefix)
+			parsedKey, err := state.ParseStateKey(key, state.CredentialPrefix, 5)
 			if err != nil {
 				return err
 			}
