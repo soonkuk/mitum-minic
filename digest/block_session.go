@@ -3,7 +3,8 @@ package digest
 import (
 	"context"
 	"fmt"
-	"github.com/ProtoconNet/mitum-credential/state"
+	didstate "github.com/ProtoconNet/mitum-credential/state"
+	crcystate "github.com/ProtoconNet/mitum-currency/v3/state"
 	"sync"
 	"time"
 
@@ -227,7 +228,7 @@ func (bs *BlockSession) Commit(ctx context.Context) error {
 
 	if len(bs.didCredentialModels) > 0 {
 		for key := range bs.credentialMap {
-			parsedKey, err := state.ParseStateKey(key, state.CredentialPrefix, 5)
+			parsedKey, err := crcystate.ParseStateKey(key, didstate.CredentialPrefix, 5)
 			if err != nil {
 				return err
 			}

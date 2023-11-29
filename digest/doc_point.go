@@ -8,6 +8,7 @@ import (
 	"github.com/ProtoconNet/mitum-point/types"
 	"github.com/ProtoconNet/mitum2/base"
 	"github.com/ProtoconNet/mitum2/util/encoder"
+	crcystate "github.com/ProtoconNet/mitum-currency/v3/state"
 )
 
 type PointDoc struct {
@@ -39,7 +40,7 @@ func (doc PointDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	stateKeys, err := state.ParseStateKey(doc.st.Key(), state.PointPrefix, 3)
+	stateKeys, err := crcystate.ParseStateKey(doc.st.Key(), state.PointPrefix, 3)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +81,7 @@ func (doc PointBalanceDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	stateKeys, err := state.ParseStateKey(doc.st.Key(), state.PointPrefix, 4)
+	stateKeys, err := crcystate.ParseStateKey(doc.st.Key(), state.PointPrefix, 4)
 	if err != nil {
 		return nil, err
 	}

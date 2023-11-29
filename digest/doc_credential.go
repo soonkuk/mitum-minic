@@ -7,6 +7,7 @@ import (
 	bsonenc "github.com/ProtoconNet/mitum-currency/v3/digest/util/bson"
 	"github.com/ProtoconNet/mitum2/base"
 	"github.com/ProtoconNet/mitum2/util/encoder"
+	crcystate "github.com/ProtoconNet/mitum-currency/v3/state"
 )
 
 type ServiceDoc struct {
@@ -38,7 +39,7 @@ func (doc ServiceDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	parsedKey, err := state.ParseStateKey(doc.st.Key(), state.CredentialPrefix, 3)
+	parsedKey, err := crcystate.ParseStateKey(doc.st.Key(), state.CredentialPrefix, 3)
 	m["contract"] = parsedKey[1]
 	m["height"] = doc.st.Height()
 	m["design"] = doc.de
@@ -75,7 +76,7 @@ func (doc TemplateDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	parsedKey, err := state.ParseStateKey(doc.st.Key(), state.CredentialPrefix, 4)
+	parsedKey, err := crcystate.ParseStateKey(doc.st.Key(), state.CredentialPrefix, 4)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +118,7 @@ func (doc CredentialDoc) MarshalBSON() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	parsedKey, err := state.ParseStateKey(doc.st.Key(), state.CredentialPrefix, 5)
+	parsedKey, err := crcystate.ParseStateKey(doc.st.Key(), state.CredentialPrefix, 5)
 	if err != nil {
 		return nil, err
 	}
@@ -161,7 +162,7 @@ func (doc HolderDIDDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	parsedKey, err := state.ParseStateKey(doc.st.Key(), state.CredentialPrefix, 4)
+	parsedKey, err := crcystate.ParseStateKey(doc.st.Key(), state.CredentialPrefix, 4)
 	if err != nil {
 		return nil, err
 	}

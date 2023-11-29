@@ -8,6 +8,7 @@ import (
 	"github.com/ProtoconNet/mitum2/base"
 	"github.com/ProtoconNet/mitum2/util/encoder"
 	"strconv"
+	crcystate "github.com/ProtoconNet/mitum-currency/v3/state"
 )
 
 type NFTCollectionDoc struct {
@@ -84,7 +85,7 @@ func (doc NFTDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	parsedKey, err := state.ParseStateKey(doc.st.Key(), state.NFTPrefix, 4)
+	parsedKey, err := crcystate.ParseStateKey(doc.st.Key(), state.NFTPrefix, 4)
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +128,7 @@ func (doc NFTOperatorDoc) MarshalBSON() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	parsedKey, err := state.ParseStateKey(doc.st.Key(), state.NFTPrefix, 4)
+	parsedKey, err := crcystate.ParseStateKey(doc.st.Key(), state.NFTPrefix, 4)
 	if err != nil {
 		return nil, err
 	}
@@ -168,7 +169,7 @@ func (doc NFTBoxDoc) MarshalBSON() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	parsedKey, err := state.ParseStateKey(doc.st.Key(), state.NFTPrefix, 3)
+	parsedKey, err := crcystate.ParseStateKey(doc.st.Key(), state.NFTPrefix, 3)
 	if err != nil {
 		return nil, err
 	}
@@ -209,7 +210,7 @@ func (doc NFTLastIndexDoc) MarshalBSON() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	parsedKey, err := state.ParseStateKey(doc.st.Key(), state.NFTPrefix, 3)
+	parsedKey, err := crcystate.ParseStateKey(doc.st.Key(), state.NFTPrefix, 3)
 	if err != nil {
 		return nil, err
 	}

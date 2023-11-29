@@ -8,6 +8,7 @@ import (
 	typesto "github.com/ProtoconNet/mitum-sto/types/sto"
 	"github.com/ProtoconNet/mitum2/base"
 	"github.com/ProtoconNet/mitum2/util/encoder"
+	crcystate "github.com/ProtoconNet/mitum-currency/v3/state"
 )
 
 type STODesignDoc struct {
@@ -39,7 +40,7 @@ func (doc STODesignDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	parsedKey, err := ststo.ParseStateKey(doc.st.Key(), ststo.STOPrefix, 3)
+	parsedKey, err := crcystate.ParseStateKey(doc.st.Key(), ststo.STOPrefix, 3)
 	m["contract"] = parsedKey[1]
 	m["height"] = doc.st.Height()
 	m["design"] = doc.de
@@ -76,7 +77,7 @@ func (doc STOHolderPartitionsDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	parsedKey, err := ststo.ParseStateKey(doc.st.Key(), ststo.STOPrefix, 4)
+	parsedKey, err := crcystate.ParseStateKey(doc.st.Key(), ststo.STOPrefix, 4)
 	m["contract"] = parsedKey[1]
 	m["holder"] = parsedKey[2]
 	m["height"] = doc.st.Height()
@@ -114,7 +115,7 @@ func (doc STOHolderPartitionBalanceDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	parsedKey, err := ststo.ParseStateKey(doc.st.Key(), ststo.STOPrefix, 5)
+	parsedKey, err := crcystate.ParseStateKey(doc.st.Key(), ststo.STOPrefix, 5)
 	m["contract"] = parsedKey[1]
 	m["holder"] = parsedKey[2]
 	m["partition"] = parsedKey[3]
@@ -153,7 +154,7 @@ func (doc STOHolderPartitionOperatorsDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	parsedKey, err := ststo.ParseStateKey(doc.st.Key(), ststo.STOPrefix, 5)
+	parsedKey, err := crcystate.ParseStateKey(doc.st.Key(), ststo.STOPrefix, 5)
 	m["contract"] = parsedKey[1]
 	m["holder"] = parsedKey[2]
 	m["partition"] = parsedKey[3]
@@ -192,7 +193,7 @@ func (doc STOPartitionBalanceDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	parsedKey, err := ststo.ParseStateKey(doc.st.Key(), ststo.STOPrefix, 4)
+	parsedKey, err := crcystate.ParseStateKey(doc.st.Key(), ststo.STOPrefix, 4)
 	m["contract"] = parsedKey[1]
 	m["partition"] = parsedKey[2]
 	m["height"] = doc.st.Height()
@@ -230,7 +231,7 @@ func (doc STOOperatorHoldersDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	parsedKey, err := ststo.ParseStateKey(doc.st.Key(), ststo.STOPrefix, 5)
+	parsedKey, err := crcystate.ParseStateKey(doc.st.Key(), ststo.STOPrefix, 5)
 	m["contract"] = parsedKey[1]
 	m["operator"] = parsedKey[2]
 	m["height"] = doc.st.Height()
