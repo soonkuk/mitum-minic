@@ -7,8 +7,8 @@ github.com/ProtoconNet/mitum-currency/v3 v3.0.0-alpha.0.20231203031618-c8c4f7815
 github.com/ProtoconNet/mitum-currency/v3 v3.0.0-alpha.0.20231203031618-c8c4f7815ceb/go.mod h1:CBFNvcPgl9E5hoiSOncG2BQFamrA5cClRrQQIXprDog=
 github.com/ProtoconNet/mitum-dao v0.0.0-20231203163411-9be9664a1a6d h1:FObOcjD8mcMqLglzOJM8AkIpFf84nKWSCw2eUN3Yxlw=
 github.com/ProtoconNet/mitum-dao v0.0.0-20231203163411-9be9664a1a6d/go.mod h1:xBmnaRCEDNEX3iol4lRco2eGbdhemGfiqcwKdCM8ZFo=
-github.com/ProtoconNet/mitum-nft/v2 v2.0.0-20231129065208-50ad4a35e762 h1:T5tjqd/wBGnOSwmm08UMDefIjdVh7oTtfzxBztM/4IE=
-github.com/ProtoconNet/mitum-nft/v2 v2.0.0-20231129065208-50ad4a35e762/go.mod h1:iLZqc1neKo7GstKYLZ4O9cKlzhqH4cXu0jnt70yXGv4=
+github.com/ProtoconNet/mitum-nft/v2 v2.0.0-20231205025718-6de445669ef7 h1:W8t3FQMZaSBvs5Zhed0ywIdMpOwfHnbZqHMuVl6NFeE=
+github.com/ProtoconNet/mitum-nft/v2 v2.0.0-20231205025718-6de445669ef7/go.mod h1:iLZqc1neKo7GstKYLZ4O9cKlzhqH4cXu0jnt70yXGv4=
 github.com/ProtoconNet/mitum-point v0.0.0-20231129070407-21aadd8a191c h1:cpBAefMLUap2CqKDe97N9uE7KjKIZ6soanPg5ATYtFM=
 github.com/ProtoconNet/mitum-point v0.0.0-20231129070407-21aadd8a191c/go.mod h1:FG9SXQgL/xK4Tdy8LZ1d6RkFW+iz98JzmAwGx1snFis=
 github.com/ProtoconNet/mitum-sto v0.0.0-20231129071452-6414188be727 h1:CSZCj3xo3zohxHxx9piIKX4PKErwWKB1pbgbyAOTiPI=

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	daocmds "github.com/ProtoconNet/mitum-dao/cmds"
 	pointcmds "github.com/ProtoconNet/mitum-point/cmds"
+	stocmds "github.com/ProtoconNet/mitum-sto/cmds"
 	timestampcmds "github.com/ProtoconNet/mitum-timestamp/cmds"
 	tokencmds "github.com/ProtoconNet/mitum-token/cmds"
 	"os"
@@ -42,6 +43,7 @@ var CLI struct { //nolint:govet //...
 		NFT        nftcmds.NFTCommand               `cmd:"" help:"nft operation"`
 		Credential credentialcmds.CredentialCommand `cmd:"" help:"credential operation"`
 		Dao        daocmds.DAOCommand               `cmd:"" help:"dao operation"`
+		STO        stocmds.STOCommand               `cmd:"" help:"sto operation"`
 		Timestamp  timestampcmds.TimestampCommand   `cmd:"" help:"timestamp operation"`
 		Token      tokencmds.TokenCommand           `cmd:"" help:"token operation"`
 		Point      pointcmds.PointCommand           `cmd:"" help:"point operation"`
