@@ -1,8 +1,8 @@
 github.com/DataDog/datadog-go v3.2.0+incompatible/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
 github.com/Masterminds/semver/v3 v3.2.1 h1:RN9w6+7QoMeJVGyfmbcgs28Br8cvmnucEXnY0rYXWg0=
 github.com/Masterminds/semver/v3 v3.2.1/go.mod h1:qvl/7zhW3nngYb5+80sSMF+FG2BjYrf8m9wsX0PNOMQ=
-github.com/ProtoconNet/mitum-credential v0.0.0-20231212124155-215c3aceb33b h1:CR0bEhZ7kRwbT3QPWYhFHILox8N5hlmyh2VZeML+RL8=
-github.com/ProtoconNet/mitum-credential v0.0.0-20231212124155-215c3aceb33b/go.mod h1:en4n3UdX6a22jKsBkZ+/vmT3SO6fFR3uSJ0EU2L1ypc=
+github.com/ProtoconNet/mitum-credential v0.0.0-20231213025423-5fabbb7f512e h1:drfjU45wO72OCbzZIQ959tbbaZcCIdMBvYU1khDSj4M=
+github.com/ProtoconNet/mitum-credential v0.0.0-20231213025423-5fabbb7f512e/go.mod h1:en4n3UdX6a22jKsBkZ+/vmT3SO6fFR3uSJ0EU2L1ypc=
 github.com/ProtoconNet/mitum-currency/v3 v3.0.0-alpha.0.20231212070407-a3424d9517ef h1:HBcoLNCDfsq4D5Bxio/Y35Nk+JNbsT1LKjFCRVE+tkU=
 github.com/ProtoconNet/mitum-currency/v3 v3.0.0-alpha.0.20231212070407-a3424d9517ef/go.mod h1:CBFNvcPgl9E5hoiSOncG2BQFamrA5cClRrQQIXprDog=
 github.com/ProtoconNet/mitum-dao v0.0.0-20231212124255-3960fcb98dca h1:jt6UaeHt0+SIOt3TfCW9wMctYa8/nvmfhAhXqknLx9M=
