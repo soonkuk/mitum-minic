@@ -81,7 +81,7 @@ func (cmd *ImportCommand) Run(pctx context.Context) error {
 		launch.PrivatekeyFlagsContextKey: cmd.PrivatekeyFlags,
 	})
 
-	pps := launch.DefaultImportPS()
+	pps := DefaultImportPS()
 	_ = pps.SetLogging(log)
 
 	_ = pps.AddOK(PNameImportBlocks, cmd.importBlocks, nil, launch.PNameStorage)
