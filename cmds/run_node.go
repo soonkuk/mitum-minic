@@ -74,11 +74,11 @@ func (cmd *RunCommand) Run(pctx context.Context) error {
 	}
 
 	nctx := util.ContextWithValues(pctx, map[util.ContextKey]interface{}{
-		launch.DesignFlagContextKey:      cmd.DesignFlag,
-		launch.DevFlagsContextKey:        cmd.DevFlags,
-		launch.DiscoveryFlagContextKey:   cmd.Discovery,
-		launch.PrivatekeyFlagsContextKey: cmd.PrivatekeyFlags,
-		launch.ACLFlagsContextKey:        cmd.ACLFlags,
+		launch.DesignFlagContextKey:    cmd.DesignFlag,
+		launch.DevFlagsContextKey:      cmd.DevFlags,
+		launch.DiscoveryFlagContextKey: cmd.Discovery,
+		launch.PrivatekeyContextKey:    string(cmd.PrivatekeyFlags.Flag.Body()),
+		launch.ACLFlagsContextKey:      cmd.ACLFlags,
 	})
 
 	pps := currencycmds.DefaultRunPS()
@@ -358,7 +358,7 @@ func (cmd *RunCommand) pDigestAPIHandlers(ctx context.Context) (context.Context,
 		return nil, err
 	}
 
-	if (design == currencycmds.DigestDesign{}) {
+	if design.Equal(currencycmds.DigestDesign{}) {
 		return ctx, nil
 	}
 
@@ -391,7 +391,7 @@ func (cmd *RunCommand) pDigestAPIHandlers(ctx context.Context) (context.Context,
 		return ctx, err
 	}
 
-	dnt.SetEncoder(enc)
+	dnt.SetEncoder(encs)
 
 	return ctx, nil
 }
@@ -452,6 +452,19 @@ func (cmd *RunCommand) setDigestNetworkClient(
 	params *launch.LocalParams,
 	handlers *currencydigest.Handlers,
 ) (*currencydigest.Handlers, error) {
+	var design currencycmds.DigestDesign
+	if err := util.LoadFromContext(ctx, currencycmds.ContextValueDigestDesign, &design); err != nil {
+		if errors.Is(err, util.ErrNotFound) {
+			return handlers, nil
+		}
+
+		return nil, err
+	}
+
+	if design.Equal(currencycmds.DigestDesign{}) {
+		return handlers, nil
+	}
+
 	var memberList *quicmemberlist.Memberlist
 	if err := util.LoadFromContextOK(ctx, launch.MemberlistContextKey, &memberList); err != nil {
 		return nil, err
@@ -473,8 +486,8 @@ func (cmd *RunCommand) setDigestNetworkClient(
 	)
 
 	handlers = handlers.SetNetworkClientFunc(
-		func() (*isaacnetwork.BaseClient, *quicmemberlist.Memberlist, error) { // nolint:contextcheck
-			return client, memberList, nil
+		func() (*isaacnetwork.BaseClient, *quicmemberlist.Memberlist, []quicstream.ConnInfo, error) { // nolint:contextcheck
+			return client, memberList, design.ConnInfo, nil
 		},
 	)
 
