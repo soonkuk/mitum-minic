@@ -69,7 +69,7 @@ func (cmd *RunCommand) Run(pctx context.Context) error {
 
 	if len(cmd.HTTPState) > 0 {
 		if err := cmd.runHTTPState(cmd.HTTPState); err != nil {
-			return errors.Wrap(err, "failed to run http state")
+			return errors.Wrap(err, "run http state")
 		}
 	}
 
@@ -112,7 +112,7 @@ func (cmd *RunCommand) Run(pctx context.Context) error {
 	defer func() {
 		log.Log().Debug().Interface("process", pps.Verbose()).Msg("process will be closed")
 
-		if _, err = pps.Close(pctx); err != nil {
+		if _, err = pps.Close(nctx); err != nil {
 			log.Log().Error().Err(err).Msg("failed to close")
 		}
 	}()

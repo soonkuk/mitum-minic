@@ -25,8 +25,5 @@ func POperationProcessorsMap(pctx context.Context) (context.Context, error) {
 		return pctx, err
 	}
 
-	var f currencycmds.ProposalOperationFactHintFunc = IsSupportedProposalOperationFactHintFunc
-	pctx = context.WithValue(pctx, currencycmds.ProposalOperationFactHintContextKey, f)
-
 	return pctx, nil
 }
