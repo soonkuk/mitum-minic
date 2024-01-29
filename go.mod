@@ -3,14 +3,14 @@ module github.com/ProtoconNet/mitum-minic
 go 1.21
 
 require (
-	github.com/ProtoconNet/mitum-credential v0.0.0-20240129021814-20fd3653ad61
+	github.com/ProtoconNet/mitum-credential v0.0.0-20240129081444-e136ecd45696
 	github.com/ProtoconNet/mitum-currency/v3 v3.0.0-alpha.0.20240129021505-31dda5d94db8
-	github.com/ProtoconNet/mitum-dao v0.0.0-20240129023102-15368f1fb327
-	github.com/ProtoconNet/mitum-nft/v2 v2.0.0-20240129023416-cf549d132443
-	github.com/ProtoconNet/mitum-point v0.0.0-20240129023719-43fd2be17469
-	github.com/ProtoconNet/mitum-sto v0.0.0-20240129022429-0213153702c6
-	github.com/ProtoconNet/mitum-timestamp v0.0.0-20240129022752-c8ae40cf484e
-	github.com/ProtoconNet/mitum-token v0.0.0-20240129024455-3097330bc459
+	github.com/ProtoconNet/mitum-dao v0.0.0-20240129082742-7f7c640a7f23
+	github.com/ProtoconNet/mitum-nft/v2 v2.0.0-20240129085022-d911b00944b6
+	github.com/ProtoconNet/mitum-point v0.0.0-20240129084413-0fb408b12173
+	github.com/ProtoconNet/mitum-sto v0.0.0-20240129082706-209dc6446bf2
+	github.com/ProtoconNet/mitum-timestamp v0.0.0-20240129081000-4facc3fbb985
+	github.com/ProtoconNet/mitum-token v0.0.0-20240129083348-09406cfd20f1
 	github.com/ProtoconNet/mitum2 v0.0.0-20240129021047-ff4078070a49
 	github.com/alecthomas/kong v0.8.1
 	github.com/arl/statsviz v0.6.0
