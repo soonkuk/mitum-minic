@@ -9,7 +9,7 @@ require (
 	github.com/ProtoconNet/mitum-nft/v2 v2.0.0-20240129085022-d911b00944b6
 	github.com/ProtoconNet/mitum-point v0.0.0-20240129084413-0fb408b12173
 	github.com/ProtoconNet/mitum-sto v0.0.0-20240129082706-209dc6446bf2
-	github.com/ProtoconNet/mitum-timestamp v0.0.0-20240129081000-4facc3fbb985
+	github.com/ProtoconNet/mitum-timestamp v0.0.0-20240130013334-5e44fa4c5966
 	github.com/ProtoconNet/mitum-token v0.0.0-20240129083348-09406cfd20f1
 	github.com/ProtoconNet/mitum2 v0.0.0-20240129021047-ff4078070a49
 	github.com/alecthomas/kong v0.8.1
