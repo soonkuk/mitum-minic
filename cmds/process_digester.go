@@ -158,7 +158,6 @@ func digestFollowup(ctx context.Context, height base.Height) error {
 	}
 
 	for h := lastBlock; h <= height; h++ {
-
 		var bm base.BlockMap
 
 		switch i, found, err := isaac.BlockItemReadersDecode[base.BlockMap](sourceReaders.Item, h, base.BlockItemMap, nil); {

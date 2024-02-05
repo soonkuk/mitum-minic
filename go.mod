@@ -4,8 +4,8 @@ go 1.21
 
 require (
 	github.com/ProtoconNet/mitum-credential v0.0.0-20240130082429-7fb3f8ecb2de
-	github.com/ProtoconNet/mitum-currency/v3 v3.0.0-alpha.0.20240131081932-fcbf3689cf8d
-	github.com/ProtoconNet/mitum-dao v0.0.0-20240130082438-ac2bc82783fc
+	github.com/ProtoconNet/mitum-currency/v3 v3.0.0-alpha.0.20240205154657-6cc705f6e8bf
+	github.com/ProtoconNet/mitum-dao v0.0.0-20240202061750-23af511c6432
 	github.com/ProtoconNet/mitum-nft/v2 v2.0.0-20240130082454-0122db83dd25
 	github.com/ProtoconNet/mitum-point v0.0.0-20240131004818-ab5f76f5e922
 	github.com/ProtoconNet/mitum-sto v0.0.0-20240131060903-4efed07afe29
