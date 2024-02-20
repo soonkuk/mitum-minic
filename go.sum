@@ -3,8 +3,8 @@ github.com/Masterminds/semver/v3 v3.2.1 h1:RN9w6+7QoMeJVGyfmbcgs28Br8cvmnucEXnY0
 github.com/Masterminds/semver/v3 v3.2.1/go.mod h1:qvl/7zhW3nngYb5+80sSMF+FG2BjYrf8m9wsX0PNOMQ=
 github.com/ProtoconNet/mitum-credential v0.0.0-20240214043452-1902da1363b9 h1:TiClB672R2CU7ADaqBB8q+m1k2jKtqDq+EYCLxorw94=
 github.com/ProtoconNet/mitum-credential v0.0.0-20240214043452-1902da1363b9/go.mod h1:etc7hTN7NiiUx9i3S19uRTuJZMYv2s4X6mCVpURuK3s=
-github.com/ProtoconNet/mitum-currency/v3 v3.0.0-alpha.0.20240214041438-9c22eba325ce h1:HhtoXlZbJg3+D2qlvuTnlZq0PBhhZy812LG6yBRinw0=
-github.com/ProtoconNet/mitum-currency/v3 v3.0.0-alpha.0.20240214041438-9c22eba325ce/go.mod h1:1R1efE0QvHtQ6FeWkDvQpEF2Nb1RTtTMRt3SdFyytZw=
+github.com/ProtoconNet/mitum-currency/v3 v3.0.0-alpha.0.20240220095507-b0a3b6280382 h1:HzNhju55Pn/5NAt9WkBxN1mvu6bJFl3Aw1qcssKW/Ds=
+github.com/ProtoconNet/mitum-currency/v3 v3.0.0-alpha.0.20240220095507-b0a3b6280382/go.mod h1:ddga/SOtKRdsYxD+ioJNZ12TevNSmAX0vF2kcD4vUtk=
 github.com/ProtoconNet/mitum-dao v0.0.0-20240208095047-6247398879fc h1:KuzDhh1/jHen06Tt/0FhA9J+Mh5vUaLQ4jJky+XEJOE=
 github.com/ProtoconNet/mitum-dao v0.0.0-20240208095047-6247398879fc/go.mod h1:wzjGb9bxJESXlSA5NJpZtcFgnLlCZffeAJcC1iyycEY=
 github.com/ProtoconNet/mitum-nft/v2 v2.0.0-20240214045705-3ae0dabe29b3 h1:cQwgNg+aTHC9/0GjgPfb46TLY6RjLqbJIJDMt+uUclo=
@@ -17,8 +17,8 @@ github.com/ProtoconNet/mitum-timestamp v0.0.0-20240214045411-7ac75e7544fd h1:2WE
 github.com/ProtoconNet/mitum-timestamp v0.0.0-20240214045411-7ac75e7544fd/go.mod h1:2BeR1R+M4A8cx1ugAD3HHYRvO/gHnEEvWBWQmOztITI=
 github.com/ProtoconNet/mitum-token v0.0.0-20240214044805-16b2085271c8 h1:8dEo+cAbCqUrIMbt4z0R89noXrkxbBY5qTVHbiQKKAg=
 github.com/ProtoconNet/mitum-token v0.0.0-20240214044805-16b2085271c8/go.mod h1:SlQhUtRc4D/2jgfNWX+Nm3kykLvFLzWDCq4iZdDQok0=
-github.com/ProtoconNet/mitum2 v0.0.0-20240129021047-ff4078070a49 h1:gPbEXly0BhUWe48FA90tVW47Rw/uLMS9FRpetQqJ2Fw=
-github.com/ProtoconNet/mitum2 v0.0.0-20240129021047-ff4078070a49/go.mod h1:8p7+9+o0msA8LM46brJkDQP0DZK794urqlfMLcFnqZE=
+github.com/ProtoconNet/mitum2 v0.0.0-20240220093622-e9221ce8ab9d h1:hbrvnL/VlM9lyyIryth6eZ9HkY6h6Ha+ysf8Wmult+8=
+github.com/ProtoconNet/mitum2 v0.0.0-20240220093622-e9221ce8ab9d/go.mod h1:8p7+9+o0msA8LM46brJkDQP0DZK794urqlfMLcFnqZE=
 github.com/aead/siphash v1.0.1/go.mod h1:Nywa3cDsYNNK3gaciGTWPwHt0wlpNV15vwmswBAUSII=
 github.com/alecthomas/assert/v2 v2.1.0 h1:tbredtNcQnoSd3QBhQWI7QZ3XHOVkw1Moklp2ojoH/0=
 github.com/alecthomas/assert/v2 v2.1.0/go.mod h1:b/+1DI2Q6NckYi+3mXyH3wFb8qG37K/DuK80n7WefXA=
