@@ -2,10 +2,12 @@ module github.com/ProtoconNet/mitum-minic
 
 go 1.21
 
+replace github.com/ProtoconNet/mitum-currency/v3 => /Users/soonkukkang/go/src/github.com/ProtoconNet/mitum-currency
+
 require (
 	github.com/ProtoconNet/mitum-credential v0.0.0-20240214043452-1902da1363b9
 	github.com/ProtoconNet/mitum-currency/v3 v3.0.0-alpha.0.20240221031221-f310f7f55f46
-	github.com/ProtoconNet/mitum-dao v0.0.0-20240208095047-6247398879fc
+	github.com/ProtoconNet/mitum-dao v0.0.0-20240226095747-8421b2ea2fb5
 	github.com/ProtoconNet/mitum-nft/v2 v2.0.0-20240214045705-3ae0dabe29b3
 	github.com/ProtoconNet/mitum-point v0.0.0-20240214044515-2a1582145dc1
 	github.com/ProtoconNet/mitum-sto v0.0.0-20240214045104-ef490475ef08
@@ -53,7 +55,7 @@ require (
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-hclog v1.6.2 // indirect
 	github.com/hashicorp/go-immutable-radix v1.3.1 // indirect
-	github.com/hashicorp/go-msgpack v0.5.5 // indirect
+	github.com/hashicorp/go-msgpack v1.1.5 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.5 // indirect
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect

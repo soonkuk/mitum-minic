@@ -149,223 +149,462 @@ func (bs *BlockSession) Commit(ctx context.Context) error {
 		_ = bs.close()
 	}()
 
-	if err := bs.writeModels(ctx, defaultColNameBlock, bs.blockModels); err != nil {
-		return err
-	}
-
-	if len(bs.operationModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameOperation, bs.operationModels); err != nil {
-			return err
+	_, err := bs.st.DatabaseClient().WithSession(func(txnCtx mongo.SessionContext, collection func(string) *mongo.Collection) (interface{}, error) {
+		if err := bs.writeModels(txnCtx, defaultColNameBlock, bs.blockModels); err != nil {
+			return nil, err
 		}
-	}
 
-	if len(bs.currencyModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameCurrency, bs.currencyModels); err != nil {
-			return err
-		}
-	}
-
-	if len(bs.accountModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameAccount, bs.accountModels); err != nil {
-			return err
-		}
-	}
-
-	if len(bs.contractAccountModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameContractAccount, bs.contractAccountModels); err != nil {
-			return err
-		}
-	}
-
-	if len(bs.nftCollectionModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameNFTCollection, bs.nftCollectionModels); err != nil {
-			return err
-		}
-	}
-
-	if len(bs.nftModels) > 0 {
-		for nft := range bs.nftMap {
-			err := bs.st.CleanByHeightColName(
-				ctx,
-				bs.block.Manifest().Height(),
-				defaultColNameNFT,
-				"nftid",
-				nft,
-			)
-			if err != nil {
-				return err
+		if len(bs.operationModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameOperation, bs.operationModels); err != nil {
+				return nil, err
 			}
 		}
 
-		if err := bs.writeModels(ctx, defaultColNameNFT, bs.nftModels); err != nil {
-			return err
-		}
-	}
-
-	if len(bs.nftOperatorModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameNFTOperator, bs.nftOperatorModels); err != nil {
-			return err
-		}
-	}
-
-	if len(bs.nftBoxModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameNFT, bs.nftBoxModels); err != nil {
-			return err
-		}
-	}
-
-	if len(bs.balanceModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameBalance, bs.balanceModels); err != nil {
-			return err
-		}
-	}
-
-	if len(bs.didIssuerModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameDIDCredentialService, bs.didIssuerModels); err != nil {
-			return err
-		}
-	}
-
-	if len(bs.didCredentialModels) > 0 {
-		for key := range bs.credentialMap {
-			parsedKey, err := crcystate.ParseStateKey(key, didstate.CredentialPrefix, 5)
-			if err != nil {
-				return err
-			}
-			err = bs.st.CleanByHeightColName(
-				ctx,
-				bs.block.Manifest().Height(),
-				defaultColNameDIDCredential,
-				"contract", parsedKey[1],
-				"template", parsedKey[2],
-				"credential_id", parsedKey[3],
-			)
-			if err != nil {
-				return err
+		if len(bs.currencyModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameCurrency, bs.currencyModels); err != nil {
+				return nil, err
 			}
 		}
 
-		if err := bs.writeModels(ctx, defaultColNameDIDCredential, bs.didCredentialModels); err != nil {
-			return err
+		if len(bs.accountModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameAccount, bs.accountModels); err != nil {
+				return nil, err
+			}
 		}
-	}
 
-	if len(bs.didHolderDIDModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameHolder, bs.didHolderDIDModels); err != nil {
-			return err
+		if len(bs.contractAccountModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameContractAccount, bs.contractAccountModels); err != nil {
+				return nil, err
+			}
 		}
-	}
 
-	if len(bs.didTemplateModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameTemplate, bs.didTemplateModels); err != nil {
-			return err
+		if len(bs.balanceModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameBalance, bs.balanceModels); err != nil {
+				return nil, err
+			}
 		}
-	}
 
-	if len(bs.timestampModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameTimeStamp, bs.timestampModels); err != nil {
-			return err
+		if len(bs.nftCollectionModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameNFTCollection, bs.nftCollectionModels); err != nil {
+				return nil, err
+			}
 		}
-	}
 
-	if len(bs.tokenModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameToken, bs.tokenModels); err != nil {
-			return err
+		if len(bs.nftModels) > 0 {
+			for nft := range bs.nftMap {
+				err := bs.st.CleanByHeightColName(
+					txnCtx,
+					bs.block.Manifest().Height(),
+					defaultColNameNFT,
+					"nftid",
+					nft,
+				)
+				if err != nil {
+					return nil, err
+				}
+			}
+
+			if err := bs.writeModels(txnCtx, defaultColNameNFT, bs.nftModels); err != nil {
+				return nil, err
+			}
 		}
-	}
 
-	if len(bs.tokenBalanceModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameTokenBalance, bs.tokenBalanceModels); err != nil {
-			return err
+		if len(bs.nftOperatorModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameNFTOperator, bs.nftOperatorModels); err != nil {
+				return nil, err
+			}
 		}
-	}
 
-	if len(bs.pointModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNamePoint, bs.pointModels); err != nil {
-			return err
+		if len(bs.nftBoxModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameNFT, bs.nftBoxModels); err != nil {
+				return nil, err
+			}
 		}
-	}
 
-	if len(bs.pointBalanceModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNamePointBalance, bs.pointBalanceModels); err != nil {
-			return err
+		if len(bs.balanceModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameBalance, bs.balanceModels); err != nil {
+				return nil, err
+			}
 		}
-	}
 
-	if len(bs.daoDesignModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameDAO, bs.daoDesignModels); err != nil {
-			return err
+		if len(bs.didIssuerModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameDIDCredentialService, bs.didIssuerModels); err != nil {
+				return nil, err
+			}
 		}
-	}
 
-	if len(bs.daoProposalModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameDAOProposal, bs.daoProposalModels); err != nil {
-			return err
+		if len(bs.didCredentialModels) > 0 {
+			for key := range bs.credentialMap {
+				parsedKey, err := crcystate.ParseStateKey(key, didstate.CredentialPrefix, 5)
+				if err != nil {
+					return nil, err
+				}
+				err = bs.st.CleanByHeightColName(
+					txnCtx,
+					bs.block.Manifest().Height(),
+					defaultColNameDIDCredential,
+					"contract", parsedKey[1],
+					"template", parsedKey[2],
+					"credential_id", parsedKey[3],
+				)
+				if err != nil {
+					return nil, err
+				}
+			}
+
+			if err := bs.writeModels(txnCtx, defaultColNameDIDCredential, bs.didCredentialModels); err != nil {
+				return nil, err
+			}
 		}
-	}
 
-	if len(bs.daoDelegatorsModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameDAODelegators, bs.daoDelegatorsModels); err != nil {
-			return err
+		if len(bs.didHolderDIDModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameHolder, bs.didHolderDIDModels); err != nil {
+				return nil, err
+			}
 		}
-	}
 
-	if len(bs.daoVotersModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameDAOVoters, bs.daoVotersModels); err != nil {
-			return err
+		if len(bs.didTemplateModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameTemplate, bs.didTemplateModels); err != nil {
+				return nil, err
+			}
 		}
-	}
 
-	if len(bs.daoVotingPowerBoxModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameDAOVotingPowerBox, bs.daoVotingPowerBoxModels); err != nil {
-			return err
+		if len(bs.timestampModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameTimeStamp, bs.timestampModels); err != nil {
+				return nil, err
+			}
 		}
-	}
 
-	if len(bs.stoDesignModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameSTO, bs.stoDesignModels); err != nil {
-			return err
+		if len(bs.tokenModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameToken, bs.tokenModels); err != nil {
+				return nil, err
+			}
 		}
-	}
 
-	if len(bs.stoHolderPartitionsModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameSTOHolderPartitions, bs.stoHolderPartitionsModels); err != nil {
-			return err
+		if len(bs.tokenBalanceModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameTokenBalance, bs.tokenBalanceModels); err != nil {
+				return nil, err
+			}
 		}
-	}
 
-	if len(bs.stoHolderPartitionBalanceModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameSTOHolderPartitionBalance, bs.stoHolderPartitionBalanceModels); err != nil {
-			return err
+		if len(bs.pointModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNamePoint, bs.pointModels); err != nil {
+				return nil, err
+			}
 		}
-	}
 
-	if len(bs.stoHolderPartitionOperatorsModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameSTOHolderPartitionOperators, bs.stoHolderPartitionOperatorsModels); err != nil {
-			return err
+		if len(bs.pointBalanceModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNamePointBalance, bs.pointBalanceModels); err != nil {
+				return nil, err
+			}
 		}
-	}
 
-	if len(bs.stoPartitionBalanceModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameSTOPartitionBalance, bs.stoPartitionBalanceModels); err != nil {
-			return err
+		if len(bs.daoDesignModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameDAO, bs.daoDesignModels); err != nil {
+				return nil, err
+			}
 		}
-	}
 
-	if len(bs.stoPartitionControllersModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameSTOPartitionControllers, bs.stoPartitionControllersModels); err != nil {
-			return err
+		if len(bs.daoProposalModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameDAOProposal, bs.daoProposalModels); err != nil {
+				return nil, err
+			}
 		}
-	}
 
-	if len(bs.stoOperatorHoldersModels) > 0 {
-		if err := bs.writeModels(ctx, defaultColNameSTOOperatorHolders, bs.stoOperatorHoldersModels); err != nil {
-			return err
+		if len(bs.daoDelegatorsModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameDAODelegators, bs.daoDelegatorsModels); err != nil {
+				return nil, err
+			}
 		}
-	}
 
-	return nil
+		if len(bs.daoVotersModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameDAOVoters, bs.daoVotersModels); err != nil {
+				return nil, err
+			}
+		}
+
+		if len(bs.daoVotingPowerBoxModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameDAOVotingPowerBox, bs.daoVotingPowerBoxModels); err != nil {
+				return nil, err
+			}
+		}
+
+		if len(bs.stoDesignModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameSTO, bs.stoDesignModels); err != nil {
+				return nil, err
+			}
+		}
+
+		if len(bs.stoHolderPartitionsModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameSTOHolderPartitions, bs.stoHolderPartitionsModels); err != nil {
+				return nil, err
+			}
+		}
+
+		if len(bs.stoHolderPartitionBalanceModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameSTOHolderPartitionBalance, bs.stoHolderPartitionBalanceModels); err != nil {
+				return nil, err
+			}
+		}
+
+		if len(bs.stoHolderPartitionOperatorsModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameSTOHolderPartitionOperators, bs.stoHolderPartitionOperatorsModels); err != nil {
+				return nil, err
+			}
+		}
+
+		if len(bs.stoPartitionBalanceModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameSTOPartitionBalance, bs.stoPartitionBalanceModels); err != nil {
+				return nil, err
+			}
+		}
+
+		if len(bs.stoPartitionControllersModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameSTOPartitionControllers, bs.stoPartitionControllersModels); err != nil {
+				return nil, err
+			}
+		}
+
+		if len(bs.stoOperatorHoldersModels) > 0 {
+			if err := bs.writeModels(txnCtx, defaultColNameSTOOperatorHolders, bs.stoOperatorHoldersModels); err != nil {
+				return nil, err
+			}
+		}
+
+		return nil, nil
+	})
+
+	return err
 }
+
+//func (bs *BlockSession) Commit(ctx context.Context) error {
+//	bs.Lock()
+//	defer bs.Unlock()
+//
+//	started := time.Now()
+//	defer func() {
+//		bs.statesValue.Store("commit", time.Since(started))
+//
+//		_ = bs.close()
+//	}()
+//
+//	if err := bs.writeModels(ctx, defaultColNameBlock, bs.blockModels); err != nil {
+//		return err
+//	}
+//
+//	if len(bs.operationModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameOperation, bs.operationModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.currencyModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameCurrency, bs.currencyModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.accountModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameAccount, bs.accountModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.contractAccountModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameContractAccount, bs.contractAccountModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.nftCollectionModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameNFTCollection, bs.nftCollectionModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.nftModels) > 0 {
+//		for nft := range bs.nftMap {
+//			err := bs.st.CleanByHeightColName(
+//				ctx,
+//				bs.block.Manifest().Height(),
+//				defaultColNameNFT,
+//				"nftid",
+//				nft,
+//			)
+//			if err != nil {
+//				return err
+//			}
+//		}
+//
+//		if err := bs.writeModels(ctx, defaultColNameNFT, bs.nftModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.nftOperatorModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameNFTOperator, bs.nftOperatorModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.nftBoxModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameNFT, bs.nftBoxModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.balanceModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameBalance, bs.balanceModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.didIssuerModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameDIDCredentialService, bs.didIssuerModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.didCredentialModels) > 0 {
+//		for key := range bs.credentialMap {
+//			parsedKey, err := crcystate.ParseStateKey(key, didstate.CredentialPrefix, 5)
+//			if err != nil {
+//				return err
+//			}
+//			err = bs.st.CleanByHeightColName(
+//				ctx,
+//				bs.block.Manifest().Height(),
+//				defaultColNameDIDCredential,
+//				"contract", parsedKey[1],
+//				"template", parsedKey[2],
+//				"credential_id", parsedKey[3],
+//			)
+//			if err != nil {
+//				return err
+//			}
+//		}
+//
+//		if err := bs.writeModels(ctx, defaultColNameDIDCredential, bs.didCredentialModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.didHolderDIDModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameHolder, bs.didHolderDIDModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.didTemplateModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameTemplate, bs.didTemplateModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.timestampModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameTimeStamp, bs.timestampModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.tokenModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameToken, bs.tokenModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.tokenBalanceModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameTokenBalance, bs.tokenBalanceModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.pointModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNamePoint, bs.pointModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.pointBalanceModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNamePointBalance, bs.pointBalanceModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.daoDesignModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameDAO, bs.daoDesignModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.daoProposalModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameDAOProposal, bs.daoProposalModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.daoDelegatorsModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameDAODelegators, bs.daoDelegatorsModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.daoVotersModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameDAOVoters, bs.daoVotersModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.daoVotingPowerBoxModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameDAOVotingPowerBox, bs.daoVotingPowerBoxModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.stoDesignModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameSTO, bs.stoDesignModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.stoHolderPartitionsModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameSTOHolderPartitions, bs.stoHolderPartitionsModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.stoHolderPartitionBalanceModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameSTOHolderPartitionBalance, bs.stoHolderPartitionBalanceModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.stoHolderPartitionOperatorsModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameSTOHolderPartitionOperators, bs.stoHolderPartitionOperatorsModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.stoPartitionBalanceModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameSTOPartitionBalance, bs.stoPartitionBalanceModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.stoPartitionControllersModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameSTOPartitionControllers, bs.stoPartitionControllersModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	if len(bs.stoOperatorHoldersModels) > 0 {
+//		if err := bs.writeModels(ctx, defaultColNameSTOOperatorHolders, bs.stoOperatorHoldersModels); err != nil {
+//			return err
+//		}
+//	}
+//
+//	return nil
+//}
 
 func (bs *BlockSession) Close() error {
 	bs.Lock()
@@ -379,7 +618,8 @@ func (bs *BlockSession) prepareOperationsTree() error {
 
 	if err := bs.opstree.Traverse(func(_ uint64, no fixedtree.Node) (bool, error) {
 		nno := no.(mitumbase.OperationFixedtreeNode)
-		if nno.InState() {
+
+		if nno.Reason() == nil {
 			nodes[nno.Key()] = nno
 		} else {
 			nodes[nno.Key()[:len(nno.Key())-1]] = nno

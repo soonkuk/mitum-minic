@@ -30,7 +30,7 @@ func (hd *Handlers) handleSTOService(w http.ResponseWriter, r *http.Request) {
 	} else {
 		crcydigest.HTTP2WriteHalBytes(hd.encoder, w, v.([]byte), http.StatusOK)
 		if !shared {
-			crcydigest.HTTP2WriteCache(w, cacheKey, time.Second*3)
+			crcydigest.HTTP2WriteCache(w, cacheKey, time.Millisecond*500)
 		}
 	}
 }
@@ -86,7 +86,7 @@ func (hd *Handlers) handleSTOHolderPartitions(w http.ResponseWriter, r *http.Req
 	} else {
 		crcydigest.HTTP2WriteHalBytes(hd.encoder, w, v.([]byte), http.StatusOK)
 		if !shared {
-			crcydigest.HTTP2WriteCache(w, cacheKey, time.Second*3)
+			crcydigest.HTTP2WriteCache(w, cacheKey, time.Millisecond*500)
 		}
 	}
 }
@@ -162,7 +162,7 @@ func (hd *Handlers) handleSTOHolderPartitionBalance(w http.ResponseWriter, r *ht
 	} else {
 		crcydigest.HTTP2WriteHalBytes(hd.encoder, w, v.([]byte), http.StatusOK)
 		if !shared {
-			crcydigest.HTTP2WriteCache(w, cachekey, time.Second*3)
+			crcydigest.HTTP2WriteCache(w, cachekey, time.Millisecond*500)
 		}
 	}
 }
@@ -231,7 +231,7 @@ func (hd *Handlers) handleSTOHolderPartitionOperators(w http.ResponseWriter, r *
 	} else {
 		crcydigest.HTTP2WriteHalBytes(hd.encoder, w, v.([]byte), http.StatusOK)
 		if !shared {
-			crcydigest.HTTP2WriteCache(w, cachekey, time.Second*3)
+			crcydigest.HTTP2WriteCache(w, cachekey, time.Millisecond*500)
 		}
 	}
 }
@@ -293,7 +293,7 @@ func (hd *Handlers) handleSTOPartitionBalance(w http.ResponseWriter, r *http.Req
 	} else {
 		crcydigest.HTTP2WriteHalBytes(hd.encoder, w, v.([]byte), http.StatusOK)
 		if !shared {
-			crcydigest.HTTP2WriteCache(w, cachekey, time.Second*3)
+			crcydigest.HTTP2WriteCache(w, cachekey, time.Millisecond*500)
 		}
 	}
 }
@@ -355,7 +355,7 @@ func (hd *Handlers) handleSTOOperatorHolders(w http.ResponseWriter, r *http.Requ
 	} else {
 		crcydigest.HTTP2WriteHalBytes(hd.encoder, w, v.([]byte), http.StatusOK)
 		if !shared {
-			crcydigest.HTTP2WriteCache(w, cachekey, time.Second*3)
+			crcydigest.HTTP2WriteCache(w, cachekey, time.Millisecond*500)
 		}
 	}
 }

@@ -43,7 +43,7 @@ func (hd *Handlers) handleTimeStamp(w http.ResponseWriter, r *http.Request) {
 		currencydigest.HTTP2WriteHalBytes(hd.encoder, w, v.([]byte), http.StatusOK)
 
 		if !shared {
-			currencydigest.HTTP2WriteCache(w, cachekey, time.Second*3)
+			currencydigest.HTTP2WriteCache(w, cachekey, time.Millisecond*500)
 		}
 	}
 }
@@ -144,7 +144,7 @@ func (hd *Handlers) handleTimeStampItem(w http.ResponseWriter, r *http.Request) 
 		currencydigest.HTTP2WriteHalBytes(hd.encoder, w, v.([]byte), http.StatusOK)
 
 		if !shared {
-			currencydigest.HTTP2WriteCache(w, cachekey, time.Second*3)
+			currencydigest.HTTP2WriteCache(w, cachekey, time.Millisecond*500)
 		}
 	}
 }
