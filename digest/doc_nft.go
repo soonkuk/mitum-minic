@@ -3,12 +3,11 @@ package digest
 import (
 	mongodbstorage "github.com/ProtoconNet/mitum-currency/v3/digest/mongodb"
 	bsonenc "github.com/ProtoconNet/mitum-currency/v3/digest/util/bson"
+	crcystate "github.com/ProtoconNet/mitum-currency/v3/state"
 	"github.com/ProtoconNet/mitum-nft/v2/state"
 	"github.com/ProtoconNet/mitum-nft/v2/types"
 	"github.com/ProtoconNet/mitum2/base"
 	"github.com/ProtoconNet/mitum2/util/encoder"
-	"strconv"
-	crcystate "github.com/ProtoconNet/mitum-currency/v3/state"
 )
 
 type NFTCollectionDoc struct {
@@ -90,12 +89,18 @@ func (doc NFTDoc) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
+	var hashArray []string
+	for _, v := range doc.st.Operations() {
+		hashArray = append(hashArray, v.String())
+	}
+
 	m["contract"] = parsedKey[1]
-	m["nftid"] = strconv.FormatUint(doc.nft.ID(), 10)
+	m["nftid"] = doc.nft.ID()
 	m["owner"] = doc.nft.Owner()
 	m["addresses"] = doc.addresses
 	m["istoken"] = true
 	m["height"] = doc.st.Height()
+	m["facthash"] = hashArray
 
 	return bsonenc.Marshal(m)
 }

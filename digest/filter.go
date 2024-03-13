@@ -73,7 +73,7 @@ func buildNFTsFilterByAddress(address base.Address, offset string, reverse bool)
 	return filter, nil
 }
 
-func buildNFTsFilterByContract(contract string, offset string, reverse bool) (bson.D, error) {
+func buildNFTsFilterByContract(contract, facthash, offset string, reverse bool) (bson.D, error) {
 	filterA := bson.A{}
 
 	// filter fot matching collection
@@ -84,18 +84,30 @@ func buildNFTsFilterByContract(contract string, offset string, reverse bool) (bs
 
 	// if offset exist, apply offset
 	if len(offset) > 0 {
+		v, err := strconv.ParseUint(offset, 10, 64)
+		if err != nil {
+			return nil, err
+		}
+
 		if !reverse {
 			filterOffset := bson.D{
-				{"nftid", bson.D{{"$gt", offset}}},
+				{"nftid", bson.D{{"$gt", v}}},
 			}
 			filterA = append(filterA, filterOffset)
 			// if reverse true, lesser then offset height
 		} else {
-			filterHeight := bson.D{
-				{"nftid", bson.D{{"$lt", offset}}},
+			filterOffset := bson.D{
+				{"nftid", bson.D{{"$lt", v}}},
 			}
-			filterA = append(filterA, filterHeight)
+			filterA = append(filterA, filterOffset)
 		}
+	}
+
+	if len(facthash) > 0 {
+		filterFactHash := bson.D{
+			{"facthash", bson.D{{"$in", []string{facthash}}}},
+		}
+		filterA = append(filterA, filterFactHash)
 	}
 
 	filter := bson.D{}

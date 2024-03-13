@@ -4,7 +4,6 @@ import (
 	"github.com/ProtoconNet/mitum-nft/v2/state"
 	mitumbase "github.com/ProtoconNet/mitum2/base"
 	"go.mongodb.org/mongo-driver/mongo"
-	"strconv"
 )
 
 func (bs *BlockSession) prepareNFTs() error {
@@ -48,7 +47,7 @@ func (bs *BlockSession) prepareNFTs() error {
 				return err
 			}
 			nftModels = append(nftModels, j...)
-			bs.nftMap[strconv.FormatUint(nft, 10)] = struct{}{}
+			bs.nftMap[nft] = struct{}{}
 		default:
 			continue
 		}

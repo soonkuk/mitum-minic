@@ -5,6 +5,7 @@ import (
 	"fmt"
 	didstate "github.com/ProtoconNet/mitum-credential/state"
 	crcystate "github.com/ProtoconNet/mitum-currency/v3/state"
+	"go.mongodb.org/mongo-driver/bson"
 	"sync"
 	"time"
 
@@ -64,7 +65,7 @@ type BlockSession struct {
 	stoOperatorHoldersModels          []mongo.WriteModel
 	statesValue                       *sync.Map
 	balanceAddressList                []string
-	nftMap                            map[string]struct{}
+	nftMap                            map[uint64]struct{}
 	credentialMap                     map[string]struct{}
 }
 
@@ -93,7 +94,7 @@ func NewBlockSession(
 		sts:           sts,
 		proposal:      proposal,
 		statesValue:   &sync.Map{},
-		nftMap:        map[string]struct{}{},
+		nftMap:        map[uint64]struct{}{},
 		credentialMap: map[string]struct{}{},
 	}, nil
 }
@@ -193,11 +194,10 @@ func (bs *BlockSession) Commit(ctx context.Context) error {
 		if len(bs.nftModels) > 0 {
 			for nft := range bs.nftMap {
 				err := bs.st.CleanByHeightColName(
-					txnCtx,
+					ctx,
 					bs.block.Manifest().Height(),
 					defaultColNameNFT,
-					"nftid",
-					nft,
+					bson.D{{"nftid", nft}},
 				)
 				if err != nil {
 					return nil, err
@@ -243,9 +243,9 @@ func (bs *BlockSession) Commit(ctx context.Context) error {
 					txnCtx,
 					bs.block.Manifest().Height(),
 					defaultColNameDIDCredential,
-					"contract", parsedKey[1],
-					"template", parsedKey[2],
-					"credential_id", parsedKey[3],
+					bson.D{{"contract", parsedKey[1]}},
+					bson.D{{"template", parsedKey[2]}},
+					bson.D{{"credential_id", parsedKey[3]}},
 				)
 				if err != nil {
 					return nil, err
